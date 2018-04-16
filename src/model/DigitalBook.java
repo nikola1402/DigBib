@@ -148,49 +148,15 @@ public class DigitalBook {
         return dbb.findDigitalBookByInventoryNum(invNum);
     }
 
-    public List<GridFSDBFile> findByTitle(String title){
-
-        String type = "title";
-
-        // List containing all the words from the title
-        ArrayList<String> wordsInTitle = new ArrayList();
+    public List<GridFSDBFile> findByTitleAuthorPublisher(String query, String type){
 
         // Splitting the title into one-word Strings
-        String[] arr = title.split(" ");
-        wordsInTitle.addAll(Arrays.asList(arr));
-        Integer wordCount = wordsInTitle.size();
+        ArrayList<String> queryToArray = new ArrayList();
+        String[] arr = query.split(" ");
+        queryToArray.addAll(Arrays.asList(arr));
+        Integer wordCount = queryToArray.size();
 
-        return dbb.findDigitalBooksByTitleAuthorPublisher(type, wordsInTitle, wordCount);
-    }
-
-    public List<GridFSDBFile> findByAuthor(String author){
-
-        String type = "author";
-
-        // List containing all the words from the title
-        ArrayList<String> wordsInAuthor = new ArrayList();
-
-        // Splitting the title into one-word Strings
-        String[] arr = title.split(" ");
-        wordsInAuthor.addAll(Arrays.asList(arr));
-        Integer wordCount = wordsInAuthor.size();
-
-        return dbb.findDigitalBooksByTitleAuthorPublisher(type, wordsInAuthor, wordCount);
-    }
-
-    public List<GridFSDBFile> findByPublisher(String publisher){
-
-        String type = "publisher";
-
-        // List containing all the words from the title
-        ArrayList<String> wordsInPublisher = new ArrayList();
-
-        // Splitting the title into one-word Strings
-        String[] arr = title.split(" ");
-        wordsInPublisher.addAll(Arrays.asList(arr));
-        Integer wordCount = wordsInPublisher.size();
-
-        return dbb.findDigitalBooksByTitleAuthorPublisher(type, wordsInPublisher, wordCount);
+        return dbb.findDigitalBooksByTitleAuthorPublisher(type, queryToArray, wordCount);
     }
 
     public List<GridFSDBFile> findByYear(Long year){

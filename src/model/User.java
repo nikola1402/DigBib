@@ -8,10 +8,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 public class User {
 
@@ -22,27 +19,8 @@ public class User {
     
     ArrayList<Book> booksBorrowed = new ArrayList<Book>();
     
-    public void User(String _id, String name, String lastName, String parent, String document, Long documentID, String joinType, Long price,
-                     String birthDate, Long userID, ArrayList booksBorrowed, String joinDate, String expireDate){
-        this._id = _id;
-        this.name = name;
-        this.lastName = lastName;
-        this.parent = parent;
-        this.document = document;
-        this.documentID = documentID;
-        this.joinType = joinType;
-        this.price = price;
-        this.birthDate = birthDate;
-        this.userID = userID;
-        this.booksBorrowed = booksBorrowed;
-        this.joinDate = joinDate;
-        this.expireDate = expireDate;
-    }
-    
     public void User() {
-   
     }
-
 
     public String getName() {
         return name;
@@ -137,34 +115,30 @@ public class User {
         return name != null && lastName != null && userID != null;
     }
 
-    public boolean addNewUser(String name, String lastName, String parent, String document, Long documentID,
-                              String joinType, Long price, String birthDate, Long userId, String joinDate, String expireDate){
+    public boolean addNewUser(Map<String, Object> userData){
 
+        Document membership = new Document("joinDate", userData.get("joinDate")).
+                append("expireDate", userData.get("expireDate")).
+                append("joinType", userData.get("joinType")).
+                append("price", userData.get("price"));
 
-        Document clanarina = new Document("joinDate", joinDate).
-                append("expireDate", expireDate).
-                append("joinType", joinType).
-                append("price", price);
+        Document user = new Document("name", userData.get("name")).
+                append("lastName", userData.get("lastName")).
+                append("birthDate", userData.get("birthDate")).
+                append("parent", userData.get("parent")).
+                append("document", userData.get("document")).
+                append("documentID", userData.get("documentId")).
+                append("userID", userData.get("userId")).
+                append("membership", membership);
 
-        Document user = new Document("name", name).
-                append("lastName", lastName).
-                append("birthDate", birthDate).
-                append("parent", parent).
-                append("document", document).
-                append("documentID", documentID).
-                append("userID", userId).
-                append("membership", clanarina);
-
-        //TODO relocate this method call. Maybe to dbb?
-        addUserHistory(userId);
-
+        addUserHistory((Long) userData.get("userId"));
         return dbb.createUser(user);
     }
 
-    public ArrayList<User> findUserByName(String name) {
+    public ArrayList<User> findUsersByName(String name) {
 
         // List that method returns as a result
-        ArrayList<User> userList = new ArrayList<>();
+        ArrayList<User> users = new ArrayList<>();
 
         // Splitting the User's name into one-word Strings
         ArrayList<String> separatedNameStrings = new ArrayList<>();
@@ -180,62 +154,27 @@ public class User {
         try{
             for (Object userObject : usersFound) {
                 user = parseUser(userObject);
-                userList.add(user);
+                users.add(user);
             }
         } catch(Exception e){
             e.printStackTrace();
         }
-        return userList;
+        return users;
     }
 
-    public User findUserByDocumentId(Long documentId) {
-        String type = "documentId";
-        Object foundUser = dbb.findUserById(type, documentId);
-        User user = parseUser(foundUser);
-        return user;
-    }
-
-    public User findUserById(Long userId) {
-        String type = "userId";
+    // Type can be userId or documentId
+    public User findUserById(Long userId, String type) {
         Object foundUser = dbb.findUserById(type, userId);
-        User user = parseUser(foundUser);
-        return user;
+        return parseUser(foundUser);
     }
 
-    public boolean borrowBook(Long userId, Book book){
-
-        // Current date and date a month from now
-        Calendar cal = Calendar.getInstance();
-        Date bookTake = cal.getTime();
-        cal.add(Calendar.MONTH, 1);
-        Date bookReturn = cal.getTime();
-
-        String dateBorrowed = String.valueOf(new SimpleDateFormat("dd.MM.yyyy").format(bookTake));
-        String dateToReturn = String.valueOf(new SimpleDateFormat("dd.MM.yyyy").format(bookReturn));
-
-        ArrayList<String> dates = new ArrayList<>();
-        dates.add(dateBorrowed);
-        dates.add(dateToReturn);
-
-        return dbb.userBorrowBook(userId, book, dates);
-    }
-
-    public boolean prolongReturnDate (Long userId, String invNumber){
-
-        // Current date and date a month from now
-        Calendar cal = Calendar.getInstance();
-        Date bookTake = cal.getTime();
-        cal.add(Calendar.MONTH, 1);
-        Date bookReturn = cal.getTime();
-
-        String dateProlonged = String.valueOf(new SimpleDateFormat("dd.MM.yyyy").format(bookTake));
-        String dateToReturn = String.valueOf(new SimpleDateFormat("dd.MM.yyyy").format(bookReturn));
-
-        ArrayList<String> dates = new ArrayList<>();
-        dates.add(dateProlonged);
-        dates.add(dateToReturn);
-
-        return dbb.updateReturnDate(userId, invNumber, dates);
+    // TODO make return type boolean?
+    public void borrowBook(Long userId, Book book, String command){
+        ArrayList<String> dates = getDates();
+        if(command.equals("borrow"))
+            dbb.userBorrowBook(userId, book, dates);
+        else if (command.equals("prolong"))
+            dbb.updateReturnDate(userId, book.getInvBroj(), dates);
     }
 
     public boolean returnBook(Long userId, String invNumber){
@@ -247,10 +186,7 @@ public class User {
         BasicDBObject queryBooks = new BasicDBObject("zaduzenja", queryBook);
         BasicDBObject deleteBook = new BasicDBObject("$pull", queryBooks);
 
-        ArrayList<BasicDBObject> queries = new ArrayList<>();
-        queries.add(queryUser);
-        queries.add(deleteBook);
-
+        ArrayList<BasicDBObject> queries = getQueries(queryUser, deleteBook);
         return dbb.userReturnBook(queries);
     }
 
@@ -260,9 +196,7 @@ public class User {
 
     public boolean addBookToUserHistory(Long userID, Book book){
 
-        Calendar cal = Calendar.getInstance();
-        Date bookTake = cal.getTime();
-        String dateBorrowed = String.valueOf(new SimpleDateFormat("dd.MM.yyyy").format(bookTake));
+        ArrayList<String> dates = getDates();
 
         BasicDBObject push = new BasicDBObject();
         push.put("$push",
@@ -270,71 +204,35 @@ public class User {
                         new BasicDBObject("bookName", book.getGlavniStvarniNaslov()).
                                 append("bookAuthor", book.getPrviPodatakOdg()).
                                 append("invNumber", book.getInvBroj()).
-                                append("bookTaken", dateBorrowed)
+                                append("bookTaken", dates.get(0))
                 ));
 
         BasicDBObject query = new BasicDBObject();
         query.put("userID", userID);
 
-        ArrayList<BasicDBObject> queries = new ArrayList<>();
-        queries.add(query);
-        queries.add(push);
-
+        ArrayList<BasicDBObject> queries = getQueries(query, push);
         return dbb.updateUserHistory(queries);
     }
 
-    // TODO what happens with historyQuery? Can this be done with regular user search query?
-    public ArrayList<Book> userHistory(Long userID) {
+    // TODO what happens with borrowed? Can this be done with regular user search query?
+
+    // String collection can contain 'istorijaZaduzenja' or 'korisnici'
+    // It is used to find currently borrowed books or entire history of them for the given user
+    public ArrayList<Book> findBorrowedBooks(Long userId, String type) {
 
         ArrayList<Book> books = new ArrayList<>();
         BasicDBObject userQuery = new BasicDBObject();
-        BasicDBObject historyQuery = new BasicDBObject();
-        userQuery.put("userID", userID);
-        historyQuery.put("zaduzenja", userQuery);
+        BasicDBObject borrowedQuery = new BasicDBObject();
+        userQuery.put("userID", userId);
+        borrowedQuery.put("zaduzenja", userQuery);
 
-        Object userObject = dbb.readUserHistory(userQuery);
+        String collection = "";
+        if(type.equals("current"))
+            collection = "korisnici";
+        else if(type.equals("history"))
+            collection = "istorijaZaduzenja";
 
-        if (userObject != null) {
-            try{
-                Gson gson = new Gson();
-                JSONParser parser = new JSONParser();
-                String korisnikString = gson.toJson(userObject);
-                JSONObject korJ = (JSONObject) parser.parse(korisnikString);
-
-                ArrayList<Object> booksBorrowed = (ArrayList) korJ.get("zaduzenja");
-
-                for (Object b : booksBorrowed) {
-                    Book k = new Book();
-                    Object obj = b;
-                    String nameObj = gson.toJson(obj);
-                    JSONObject jObj = (JSONObject) parser.parse(nameObj);
-
-                    k.setGlavniStvarniNaslov((String) jObj.get("bookName"));
-                    k.setPrviPodatakOdg((String) jObj.get("bookAuthor"));
-                    k.setDatumZaduzenja((String) jObj.get("bookTaken"));
-                    k.setDatumRazduzenja((String) jObj.get("bookReturn"));
-                    k.setInvBroj((String) jObj.get("invNumber"));
-
-                    books.add(k);
-                }
-            } catch(Exception e){
-                e.printStackTrace();
-            }
-        }
-        return books;
-    }
-
-    public ArrayList<Book> findBorrowedBooks(Long userID) {
-
-        BasicDBObject query = new BasicDBObject();
-        query.put("userID", userID);
-
-        Object foundUser = dbb.findBooksBorrowedByUser(query);
-//        BasicDBObject zaduzenjaQuery = new BasicDBObject();
-//        zaduzenjaQuery.put("zaduzenja", userQuery);
-
-        ArrayList<Book> books = new ArrayList<>();
-        ArrayList<Object> booksInHistory;
+        Object foundUser = dbb.findBooksBorrowedByUser(userQuery, collection);
 
         if (foundUser != null) {
             try{
@@ -343,7 +241,7 @@ public class User {
                 String userJsonString = gson.toJson(foundUser);
                 JSONObject userJsonObject = (JSONObject) parser.parse(userJsonString);
 
-                booksInHistory = (ArrayList) userJsonObject.get("zaduzenja");
+                ArrayList<Object> booksInHistory = (ArrayList) userJsonObject.get("zaduzenja");
 
                 for (Object b : booksInHistory) {
                     Book book = new Book();
@@ -377,57 +275,13 @@ public class User {
         BasicDBObject book = new BasicDBObject("inventoryData.inventarniBroj", invNumber);
         BasicDBObject query = new BasicDBObject(command, new BasicDBObject("reservations", userID));
 
-        ArrayList<BasicDBObject> queries = new ArrayList<>();
-        queries.add(book);
-        queries.add(query);
-
-        return dbb.userReservationAction(queries);
-    }
-
-    public ArrayList<Book> findReservations(Long userId) {
-
-        ArrayList<Book> books = new ArrayList<>();
-//        ArrayList<Book> empty = new ArrayList<>();
-
-        BasicDBObject query = new BasicDBObject("reservations", userId);
-
-        ArrayList<Object> booksFound = dbb.findBooksByParameter(query);
-
-        try {
-            for (Object b : booksFound) {
-                Book book = new Book();
-                Gson gson = new Gson();
-                JSONParser parser = new JSONParser();
-                String nameObj = gson.toJson(b);
-                JSONObject jObj = (JSONObject) parser.parse(nameObj);
-                JSONObject proc = (JSONObject) jObj.get("processed");
-                JSONObject inv = (JSONObject) jObj.get("inventoryData");
-                JSONObject naslovOdgovornost = (JSONObject) proc.get("stvarniNaslovOdgovornost");
-                JSONObject izdavanje = (JSONObject) proc.get("izdavanje");
-
-                book.setGlavniStvarniNaslov((String) naslovOdgovornost.get("a"));
-                book.setPrviPodatakOdg((String) naslovOdgovornost.get("f"));
-                book.setGodinaIzdavanja((Long) izdavanje.get("d"));
-                book.setIzdavac((String) izdavanje.get("c"));
-                book.setInvBroj((String) inv.get("inventarniBroj"));
-
-                books.add(book);
-            }
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-
-        return books;
-
-//        if(!books.isEmpty())
-//            return books;
-//        else
-//            return empty;
+        ArrayList<BasicDBObject> queries = getQueries(book, query);
+        return dbb.updateBookData(queries);
     }
 
     // TODO place this method in Book class? Rewrite method?
+    // Method checks if the book is reserved by someone after being returned, and returns the User that reserved it
     public User checkIfReserved(String invNumber) {
-        // Proverava da li postoji neko ko je rezervisao knjigu nakon sto je vracena
 
         User user = new User();
         ArrayList<Object> reservations;
@@ -435,15 +289,15 @@ public class User {
 
         BasicDBObject query = new BasicDBObject("inventoryData.inventarniBroj", invNumber);
 
-        Object book = dbb.checkReservations(query);
+        Object book = dbb.findBookByInventoryNum(query);
 
         try{
             Gson gson = new Gson();
             JSONParser parser = new JSONParser();
-            String bookString = gson.toJson(book);
-            JSONObject jObj = (JSONObject) parser.parse(bookString);
+            String bookJsonString = gson.toJson(book);
+            JSONObject bookJsonObject = (JSONObject) parser.parse(bookJsonString);
 
-            reservations = (ArrayList<Object>) jObj.get("reservations");
+            reservations = (ArrayList<Object>) bookJsonObject.get("reservations");
             Object o = reservations.get(0);
             usrRes = o.toString();
 
@@ -452,7 +306,7 @@ public class User {
             Long usr = Long.valueOf(str);
 
             if(!usrRes.isEmpty()) {
-                user = findUserById(usr);
+                user = findUserById(usr, "userId");
             }
             else {
                 user = null;
@@ -492,5 +346,28 @@ public class User {
 
         return user;
     }
-    
+
+    public ArrayList<String> getDates(){
+        // Current date and date a month from now
+        Calendar cal = Calendar.getInstance();
+        Date bookTake = cal.getTime();
+        cal.add(Calendar.MONTH, 1);
+        Date bookReturn = cal.getTime();
+
+        String dateBorrowed = String.valueOf(new SimpleDateFormat("dd.MM.yyyy").format(bookTake));
+        String dateToReturn = String.valueOf(new SimpleDateFormat("dd.MM.yyyy").format(bookReturn));
+
+        ArrayList<String> dates = new ArrayList<>();
+        dates.add(dateBorrowed);
+        dates.add(dateToReturn);
+
+        return dates;
+    }
+
+    public ArrayList<BasicDBObject> getQueries(BasicDBObject first, BasicDBObject second){
+        ArrayList<BasicDBObject> queries = new ArrayList<>();
+        queries.add(first);
+        queries.add(second);
+        return queries;
+    }
 }

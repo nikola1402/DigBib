@@ -86,25 +86,29 @@ public class Librarian {
                 append("inventory", inventory).
                 append("admin", admin);
 
-        dbb.createLibrarian(librarianObject);
-
-        return true;
+        return dbb.createLibrarian(librarianObject);
     }
 
     //TODO Check how this method works. Why does it need a 'name' argument?
     public ArrayList<Librarian> findAllLibrarians(String name){
 
-        Object obj = dbb.findAllLibrarians(name);
+        ArrayList<Object> foundLibrarians = dbb.findAllLibrarians(name);
 
         ArrayList<Librarian> librarians = new ArrayList<>();
         Librarian librarian = new Librarian();
 
-        try {
-            Gson gson = new Gson();
-            JSONParser parser = new JSONParser();
+        Gson gson = new Gson();
+        JSONParser parser = new JSONParser();
+        JSONObject jObj = null;
 
-            String nameObj = gson.toJson(obj);
-            JSONObject jObj = (JSONObject) parser.parse(nameObj);
+        for(Object o : foundLibrarians){
+            String nameObj = gson.toJson(o);
+
+            try {
+                jObj = (JSONObject) parser.parse(nameObj);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             librarian.setName((String) jObj.get("name"));
             librarian.setLastName((String) jObj.get("lastName"));
@@ -112,10 +116,7 @@ public class Librarian {
             librarian.setProcessing((Boolean) jObj.get("processing"));
             librarian.setInventory((Boolean) jObj.get("inventory"));
             librarian.setAdmin((Boolean) jObj.get("admin"));
-
             librarians.add(librarian);
-        } catch(Exception e){
-            e.printStackTrace();
         }
         return librarians;
     }

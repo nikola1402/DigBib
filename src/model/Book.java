@@ -22,19 +22,7 @@ public class Book {
     Long godinaIzdavanjaObrada, godinaIzdavanja, vrstaAutorstva, hijerarhijskiNivo;
     ArrayList<Long> rezervacije;
     
-    private void Book(String glavniStvarniNaslov, String prviPodatakOdg, Long godinaIzdavanja,
-                      String izdavac, String invBroj, String datumZaduzenja, String datumRazduzenja){
-        this.glavniStvarniNaslov = glavniStvarniNaslov;
-        this.prviPodatakOdg = prviPodatakOdg;
-        this.godinaIzdavanja = godinaIzdavanja;
-        this.izdavac = izdavac;
-        this.invBroj = invBroj;
-        this.datumZaduzenja = datumZaduzenja;
-        this.datumRazduzenja = datumRazduzenja;
-    }
-    
     private void Book(){
-        
     }
 
     public String getId() {
@@ -173,7 +161,6 @@ public class Book {
         this.obradio = obradio;
     }
 
-
     public String getDatumZaduzenja() {
         return datumZaduzenja;
     }
@@ -243,58 +230,58 @@ public class Book {
         return glavniStvarniNaslov != null && prviPodatakOdg != null && godinaIzdavanja != null && izdavac != null && invBroj != null;
     }
 
-    public boolean processBook(ArrayList<String> processedBookData){
+    public boolean processBook(ArrayList<String> bookData){
 
         // Creating documents with data inputted by the librarian
         Document identifikatorSloga = new Document("_id", "001").
-                append("7", processedBookData.get(0)).
-                append("a", processedBookData.get(1)).
-                append("b", processedBookData.get(2)).
-                append("c", processedBookData.get(3)).
-                append("d", Long.valueOf(processedBookData.get(4)));
+                append("7", bookData.get(0)).
+                append("a", bookData.get(1)).
+                append("b", bookData.get(2)).
+                append("c", bookData.get(3)).
+                append("d", Long.valueOf(bookData.get(4)));
         Document isbn = new Document("_id", "010").
-                append("a", processedBookData.get(5));
+                append("a", bookData.get(5));
         Document opstiPodaciZaObradu = new Document("_id", "100").
-                append("c", Long.valueOf(processedBookData.get(6))).
-                append("h", processedBookData.get(7));
+                append("c", Long.valueOf(bookData.get(6))).
+                append("h", bookData.get(7));
         Document jezikPublikacije = new Document("_id", "101").
-                append("a", processedBookData.get(8));
+                append("a", bookData.get(8));
         Document zemljaIzdavanja = new Document("_id", "102").
-                append("a", processedBookData.get(9));
+                append("a", bookData.get(9));
         Document poljeKodiranihPodataka = new Document("_id", "105").
-                append("a", processedBookData.get(10));
+                append("a", bookData.get(10));
         Document stvarniNaslovOdgovornost = new Document("_id", "200").
-                append("a", processedBookData.get(11)).
-                append("f", processedBookData.get(12));
+                append("a", bookData.get(11)).
+                append("f", bookData.get(12));
         Document izdavanje = new Document("_id", "210").
-                append("a", processedBookData.get(13)).
-                append("c", processedBookData.get(14)).
-                append("d", Long.valueOf(processedBookData.get(15)));
+                append("a", bookData.get(13)).
+                append("c", bookData.get(14)).
+                append("d", Long.valueOf(bookData.get(15)));
         Document materijalniOpis = new Document("_id", "215").
-                append("a", processedBookData.get(16)).
-                append("d", processedBookData.get(17));
+                append("a", bookData.get(16)).
+                append("d", bookData.get(17));
         Document napomenaOBibliografijama = new Document("_id", "320").
-                append("a", processedBookData.get(18));
+                append("a", bookData.get(18));
         Document fizickiOpis = new Document("_id", "324").
-                append("a", processedBookData.get(19));
+                append("a", bookData.get(19));
         Document kratakSadrzaj = new Document("_id", "330")
-                .append("a", processedBookData.get(20));
+                .append("a", bookData.get(20));
         Document licnoImePredmetnaOdrednica = new Document("_id", "600").
-                append("a", processedBookData.get(21)).
-                append("b", processedBookData.get(22));
+                append("a", bookData.get(21)).
+                append("b", bookData.get(22));
         Document tematskaPredmetnaOdrednica = new Document("_id", "606").
-                append("a", processedBookData.get(23)).
-                append("x", processedBookData.get(24)).
-                append("y", processedBookData.get(25));
+                append("a", bookData.get(23)).
+                append("x", bookData.get(24)).
+                append("y", bookData.get(25));
         Document udk = new Document("_id", "675").
-                append("a", processedBookData.get(26)).
-                append("b", processedBookData.get(27));
+                append("a", bookData.get(26)).
+                append("b", bookData.get(27));
         Document licnoImePrimarnaOdgovornost = new Document("_id", "700").
-                append("4", Long.valueOf(processedBookData.get(28))).
-                append("a", processedBookData.get(29)).
-                append("b", processedBookData.get(30));
+                append("4", Long.valueOf(bookData.get(28))).
+                append("a", bookData.get(29)).
+                append("b", bookData.get(30));
         Document lokalnePotrebe = new Document("_id", "992").
-                append("b", processedBookData.get(31));
+                append("b", bookData.get(31));
 
         // Combining previously created documents inside one new document
         Document insertBook = new Document().
@@ -357,7 +344,7 @@ public class Book {
         queries.add(query);
         queries.add(command);
 
-        return dbb.updateInventoryData(queries);
+        return dbb.updateBookData(queries);
     }
 
     public ArrayList<Book> findBooksToProcess(){
@@ -371,12 +358,11 @@ public class Book {
         // Getting objects from the list, converting them to json Strings and parsing to JSONObject
         // Filling the 'Book' object with parsed JSON objects
         try{
-            for(int i=0; i<booksFound.size(); i++){
+            for (BasicDBObject obj : booksFound) {
                 Book book = new Book();
                 Gson gson = new Gson();
                 JSONParser parser = new JSONParser();
 
-                BasicDBObject obj = booksFound.get(i);
                 String strObj = gson.toJson(obj);
 
                 JSONObject jObj = (JSONObject) parser.parse(strObj);
@@ -443,19 +429,20 @@ public class Book {
     }
 
     // Finding a book that user wants to borrowBook
+    // Change method 'findBookByInventoryNum' to return ArrayList
     public Book borrowBook(String invNum){
 
-        Book book = new Book();
         BasicDBObject query = new BasicDBObject("inventoryData.inventarniBroj", invNum).
                 append("inventory", true);
+
+        Book book = new Book();
+        Object foundBook = dbb.findBookByInventoryNum(query);
 
         // Parsing JSON file, filling the 'Book' object
         try {
             Gson gson = new Gson();
             JSONParser parser = new JSONParser();
-            Object foundBook = dbb.findBookByInventoryNum(query);
             String nameObj = gson.toJson(foundBook);
-
             JSONObject jObj = (JSONObject) parser.parse(nameObj);
             JSONObject proc = (JSONObject) jObj.get("processed");
             JSONObject inv = (JSONObject) jObj.get("inventoryData");
@@ -473,181 +460,27 @@ public class Book {
         return book;
     }
 
-    public ArrayList<Book> findBooksByTitle(String bookTitle){
+    // TODO use just array instead of ArrayList
+    // Type can be 'title', 'author' or 'publisher'
+    public ArrayList<Book> findBooksByTitleAuthorPublisher(String query, String type){
 
-        String type = "title";
+        // Separating the query into multiple Strings and putting them into Array
+        ArrayList<String> queryToArray = new ArrayList<>();
+        String[] arr = query.split(" ");
+        queryToArray.addAll(Arrays.asList(arr));
+        Integer wordCount = queryToArray.size();
 
-        // List that will be returned by the method
-        ArrayList<Book> books = new ArrayList<>();
-
-        // List that contains separated words from the book title
-        ArrayList<String> wordsInTitle = new ArrayList<>();
-
-        // Separating the title into multiple Strings and putting them into Array
-        String[] arr = bookTitle.split(" ");
-        wordsInTitle.addAll(Arrays.asList(arr));
-        int countWords = wordsInTitle.size();
-
-        ArrayList<Object> booksFound = dbb.findBooksByTitleAuthorPublisher(type, wordsInTitle, countWords);
-
-        // Getting objects from the list, converting them to json Strings and parsing to JSONObject
-        // Filling the 'Book' object with parsed JSON objects
-        try{
-            for (Object bookFound : booksFound) {
-                Book book = new Book();
-                Gson gson = new Gson();
-                JSONParser parser = new JSONParser();
-                String nameObj = gson.toJson(bookFound);
-                JSONObject jObj = (JSONObject) parser.parse(nameObj);
-                JSONObject proc = (JSONObject) jObj.get("processed");
-                JSONObject inv = (JSONObject) jObj.get("inventoryData");
-                JSONObject naslovOdgovornost = (JSONObject) proc.get("stvarniNaslovOdgovornost");
-                JSONObject izdavanje = (JSONObject) proc.get("izdavanje");
-
-                book.setGlavniStvarniNaslov((String) naslovOdgovornost.get("a"));
-                book.setPrviPodatakOdg((String) naslovOdgovornost.get("f"));
-                book.setGodinaIzdavanja((Long) izdavanje.get("d"));
-                book.setIzdavac((String) izdavanje.get("c"));
-                book.setInvBroj((String) inv.get("inventarniBroj"));
-
-                books.add(book);
-            }
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-        return books;
-    }
-
-    public ArrayList<Book> findBooksByAuthor(String author){
-
-        String type = "author";
-
-        // List that will be returned by the method
-        ArrayList<Book> books = new ArrayList<>();
-
-        // List containing different words from the authors name
-        ArrayList<String> wordsInName = new ArrayList<>();
-
-        // Splitting the authors name into multiple one-word Strings
-        String[] arr = author.split(" ");
-        wordsInName.addAll(Arrays.asList(arr));
-        int countWords = wordsInName.size();
-
-        ArrayList<Object> booksFound = dbb.findBooksByTitleAuthorPublisher(type, wordsInName, countWords);
-
-        // Getting the object from the list, converting it to json Strings and parsing to JSONObject
-        // Filling the 'Book' object with parsed JSON objects
-        try{
-            for(int i=0; i<booksFound.size(); i++){
-                Book book = new Book();
-                Gson gson = new Gson();
-                JSONParser parser = new JSONParser();
-                Object obj = booksFound.get(i);
-                String nameObj = gson.toJson(obj);
-                JSONObject jObj = (JSONObject) parser.parse(nameObj);
-                JSONObject proc = (JSONObject) jObj.get("processed");
-                JSONObject inv = (JSONObject) jObj.get("inventoryData");
-                JSONObject naslovOdgovornost = (JSONObject) proc.get("stvarniNaslovOdgovornost");
-                JSONObject izdavanje = (JSONObject) proc.get("izdavanje");
-
-                book.setGlavniStvarniNaslov((String) naslovOdgovornost.get("a"));
-                book.setPrviPodatakOdg((String) naslovOdgovornost.get("f"));
-                book.setGodinaIzdavanja((Long) izdavanje.get("d"));
-                book.setIzdavac((String) izdavanje.get("c"));
-                book.setInvBroj((String) inv.get("inventarniBroj"));
-
-                books.add(book);
-            }
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-        return books;
-    }
-
-    public ArrayList<Book> findBooksByPublisher(String publisher){
-
-        String type = "publisher";
-
-        // List that method returns as a result
-        ArrayList<Book> books = new ArrayList<>();
-
-        // List containing different words from publisher's name
-        ArrayList<String> wordsInPublisher = new ArrayList<>();
-
-        // Splitting the publisher's name into multiple one-word Strings
-        String[] arr = publisher.split(" ");
-        wordsInPublisher.addAll(Arrays.asList(arr));
-        int wordCount = wordsInPublisher.size();
-
-        ArrayList<Object> booksFound = dbb.findBooksByTitleAuthorPublisher(type, wordsInPublisher, wordCount);
-
-        // Getting the object from the list, converting it to json Strings and parsing to JSONObject
-        // Filling the 'Book' object with parsed JSON objects
-        try{
-            for (Object b : booksFound) {
-                Book book = new Book();
-                Gson gson = new Gson();
-                JSONParser parser = new JSONParser();
-                String nameObj = gson.toJson(b);
-                JSONObject jObj = (JSONObject) parser.parse(nameObj);
-                JSONObject proc = (JSONObject) jObj.get("processed");
-                JSONObject inv = (JSONObject) jObj.get("inventoryData");
-                JSONObject naslovOdgovornost = (JSONObject) proc.get("stvarniNaslovOdgovornost");
-                JSONObject izdavanje = (JSONObject) proc.get("izdavanje");
-
-                book.setGlavniStvarniNaslov((String) naslovOdgovornost.get("a"));
-                book.setPrviPodatakOdg((String) naslovOdgovornost.get("f"));
-                book.setGodinaIzdavanja((Long) izdavanje.get("d"));
-                book.setIzdavac((String) izdavanje.get("c"));
-                book.setInvBroj((String) inv.get("inventarniBroj"));
-
-                books.add(book);
-            }
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-        return books;
+        ArrayList<Object> booksFound = dbb.findBooksByTitleAuthorPublisher(type, queryToArray, wordCount);
+        return parseBooks(booksFound);
     }
 
     public ArrayList<Book> findBooksByYear(Long year){
-
-        // List that method returns as a result
-        ArrayList<Book> books = new ArrayList<>();
-
-        // $regex compares Strings
-        // $options i neglects the differences between capital and small letteres in Strings
         BasicDBObject query = new BasicDBObject();
         query.put("processed.izdavanje.d", year);
         query.put("inventory", true);
 
         ArrayList<Object> booksFound = dbb.findBooksByParameter(query);
-
-        // Getting the object from the list, converting it to json Strings and parsing to JSONObject
-        // Filling the 'Book' object with parsed JSON objects
-        try{
-            for (Object aKnjigeFoundList : booksFound) {
-                Book book = new Book();
-                Gson gson = new Gson();
-                JSONParser parser = new JSONParser();
-                String nameObj = gson.toJson(aKnjigeFoundList);
-                JSONObject jObj = (JSONObject) parser.parse(nameObj);
-                JSONObject proc = (JSONObject) jObj.get("processed");
-                JSONObject inv = (JSONObject) jObj.get("inventoryData");
-                JSONObject naslovOdgovornost = (JSONObject) proc.get("stvarniNaslovOdgovornost");
-                JSONObject izdavanje = (JSONObject) proc.get("izdavanje");
-
-                book.setGlavniStvarniNaslov((String) naslovOdgovornost.get("a"));
-                book.setPrviPodatakOdg((String) naslovOdgovornost.get("f"));
-                book.setGodinaIzdavanja((Long) izdavanje.get("d"));
-                book.setIzdavac((String) izdavanje.get("c"));
-                book.setInvBroj((String) inv.get("inventarniBroj"));
-
-                books.add(book);
-            }
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-        return books;
+        return parseBooks(booksFound);
     }
 
     public ArrayList<Book> findBookByInventoryNum(String invNum){
@@ -693,5 +526,47 @@ public class Book {
         return books;
     }
 
+    public ArrayList<Book> findReservations(Long userId) {
+        BasicDBObject query = new BasicDBObject("reservations", userId);
+        ArrayList<Object> booksFound = dbb.findBooksByParameter(query);
+        return parseBooks(booksFound);
+    }
+
+    private ArrayList<Book> parseBooks(ArrayList<Object> booksToParse){
+
+        ArrayList<Book> books = new ArrayList<>();
+
+        // Getting the object from the list, converting it to json Strings and parsing to JSONObject
+        // Filling the 'Book' object with parsed JSON objects
+        try {
+            for (Object b : booksToParse) {
+                Book book = new Book();
+                Gson gson = new Gson();
+                JSONParser parser = new JSONParser();
+                String nameObj = gson.toJson(b);
+                JSONObject jObj = (JSONObject) parser.parse(nameObj);
+                JSONObject proc = (JSONObject) jObj.get("processed");
+                JSONObject inv = (JSONObject) jObj.get("inventoryData");
+                JSONObject naslovOdgovornost = (JSONObject) proc.get("stvarniNaslovOdgovornost");
+                JSONObject izdavanje = (JSONObject) proc.get("izdavanje");
+
+                book.setGlavniStvarniNaslov((String) naslovOdgovornost.get("a"));
+                book.setPrviPodatakOdg((String) naslovOdgovornost.get("f"));
+                book.setGodinaIzdavanja((Long) izdavanje.get("d"));
+                book.setIzdavac((String) izdavanje.get("c"));
+                book.setInvBroj((String) inv.get("inventarniBroj"));
+
+                books.add(book);
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return books;
+    }
+
+    private ArrayList<String> split(String toSplit){
+        return new ArrayList<>();
+    }
 
 }

@@ -32,12 +32,6 @@ public class DBBroker {
         return true;
     }
 
-    public boolean updateInventoryData(ArrayList<BasicDBObject> queries){
-        MongoCollection coll = db.getCollection("knjige");
-        coll.updateOne(queries.get(0), queries.get(1));
-        return true;
-    }
-
     public ArrayList<BasicDBObject> findBooksToProcess(BasicDBObject query){
 
         // This type of connection is because only through BasicDBObject we can get the correct _id
@@ -369,34 +363,22 @@ public class DBBroker {
         return true;
     }
 
-    public Object readUserHistory(BasicDBObject query){
-        MongoCollection coll = db.getCollection("istorijaZaduzenja");
-        return coll.find(query).first();
-    }
-
     public boolean updateUserHistory(ArrayList<BasicDBObject> queries){
         MongoCollection coll = db.getCollection("istorijaZaduzenja");
         coll.updateOne(queries.get(0), queries.get(1));
         return true;
     }
 
-    public boolean userReservationAction(ArrayList<BasicDBObject> queries){
+    public boolean updateBookData(ArrayList<BasicDBObject> queries){
         MongoCollection coll = db.getCollection("knjige");
         coll.updateOne(queries.get(0), queries.get(1));
         return true;
     }
 
-    public Object checkReservations(BasicDBObject query){
-        MongoCollection coll = db.getCollection("knjige");
-        Object book = coll.find(query).first();
-        return book;
-    }
-
     // TODO Is this needed? Can it be extracted from the user?
-    public Object findBooksBorrowedByUser(BasicDBObject query){
-        MongoCollection coll = db.getCollection("korisnici");
-        Object user = coll.find(query).first();
-        return user;
+    public Object findBooksBorrowedByUser(BasicDBObject query, String collection){
+        MongoCollection coll = db.getCollection(collection);
+        return coll.find(query).first();
     }
 
 
@@ -410,8 +392,8 @@ public class DBBroker {
         return true;
     }
 
+    // TODO does it find all librarians or just one?
     public ArrayList<Object> findAllLibrarians(String name){
-
         MongoCollection coll = db.getCollection("bibliotekar");
         ArrayList<Object> librarians = new ArrayList<>();
         BasicDBObject query = new BasicDBObject("userID", name);
@@ -420,7 +402,6 @@ public class DBBroker {
     }
 
     public Object findLibrarian(String name){
-
         MongoCollection coll = db.getCollection("bibliotekar");
         BasicDBObject query = new BasicDBObject("name", name);
         Object librarianObject = coll.find(query).first();
