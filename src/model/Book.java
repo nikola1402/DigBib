@@ -14,13 +14,13 @@ import java.util.Arrays;
 public class Book {
 
     private DBBroker dbb;
-   
-    String _id, pismo, stanjeSloga, vrstaSloga, bibliografskiNivo, isbn, jezikKatalogizacije, jezikTeksta, zemljaIzdavanja, 
+
+    private String _id, pismo, stanjeSloga, vrstaSloga, bibliografskiNivo, isbn, jezikKatalogizacije, jezikTeksta, zemljaIzdavanja,
             kodoviZaIlustracije, glavniStvarniNaslov, prviPodatakOdg, mestoIzdavanja, izdavac, gradjaObim, dimenzije, napomena,
             prviElementImeOdr, deoImenaOdr, prviElementTemaOdr, invBroj, tematskaPododr, geografskaPododr, udk, udkGrupa, prviElementImeOdg, deoImenaOdg, 
             obradio, datumInventarisanja, inventator, nacinNabavke, cena, povez, datumZaduzenja, datumRazduzenja, sadrzaj, vrstaGradje, fizickiOpis;
-    Long godinaIzdavanjaObrada, godinaIzdavanja, vrstaAutorstva, hijerarhijskiNivo;
-    ArrayList<Long> rezervacije;
+    private Long godinaIzdavanjaObrada, godinaIzdavanja, vrstaAutorstva, hijerarhijskiNivo;
+    private ArrayList<Long> rezervacije;
     
     private void Book(){
     }

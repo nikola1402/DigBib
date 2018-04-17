@@ -151,7 +151,7 @@ public class DigitalBook {
     public List<GridFSDBFile> findByTitleAuthorPublisher(String query, String type){
 
         // Splitting the title into one-word Strings
-        ArrayList<String> queryToArray = new ArrayList();
+        ArrayList<String> queryToArray = new ArrayList<>();
         String[] arr = query.split(" ");
         queryToArray.addAll(Arrays.asList(arr));
         Integer wordCount = queryToArray.size();

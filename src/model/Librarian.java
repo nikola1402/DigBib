@@ -14,20 +14,8 @@ public class Librarian {
  
     private String name, lastName, username, password;
     private boolean processing, inventory, circulation, admin;
-    
-    public void Libraran(String name, String lastName, String username, String password, boolean circulation, boolean processing, boolean inventory, boolean admin){
-        this.name = name;
-        this.lastName = lastName;
-        this.username = username;
-        this.password = password;
-        this.processing = processing;
-        this.inventory = inventory;
-        this.circulation = circulation;
-        this.admin = admin;
-    }
 
-    public void Libraran(){
-        
+    public void Librarian(){
     }
     
     public String getName() {
@@ -77,7 +65,7 @@ public class Librarian {
     public boolean addNewLibrarian(String name, String lastName, String username, String password,
                                    boolean circulation, boolean processing, boolean inventory, boolean admin){
 
-        Document librarianObject = new Document("name", name).
+        Document librarian = new Document("name", name).
                 append("lastName", lastName).
                 append("username", username).
                 append("password", password).
@@ -86,7 +74,7 @@ public class Librarian {
                 append("inventory", inventory).
                 append("admin", admin);
 
-        return dbb.createLibrarian(librarianObject);
+        return dbb.createLibrarian(librarian);
     }
 
     //TODO Check how this method works. Why does it need a 'name' argument?
@@ -99,24 +87,21 @@ public class Librarian {
 
         Gson gson = new Gson();
         JSONParser parser = new JSONParser();
-        JSONObject jObj = null;
 
         for(Object o : foundLibrarians){
-            String nameObj = gson.toJson(o);
-
+            String librarianJsonString = gson.toJson(o);
             try {
-                jObj = (JSONObject) parser.parse(nameObj);
+                JSONObject librarianJsonObject = (JSONObject) parser.parse(librarianJsonString);
+                librarian.setName((String) librarianJsonObject.get("name"));
+                librarian.setLastName((String) librarianJsonObject.get("lastName"));
+                librarian.setCirculation((Boolean) librarianJsonObject.get("circulation"));
+                librarian.setProcessing((Boolean) librarianJsonObject.get("processing"));
+                librarian.setInventory((Boolean) librarianJsonObject.get("inventory"));
+                librarian.setAdmin((Boolean) librarianJsonObject.get("admin"));
+                librarians.add(librarian);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            librarian.setName((String) jObj.get("name"));
-            librarian.setLastName((String) jObj.get("lastName"));
-            librarian.setCirculation((Boolean) jObj.get("circulation"));
-            librarian.setProcessing((Boolean) jObj.get("processing"));
-            librarian.setInventory((Boolean) jObj.get("inventory"));
-            librarian.setAdmin((Boolean) jObj.get("admin"));
-            librarians.add(librarian);
         }
         return librarians;
     }
@@ -126,20 +111,18 @@ public class Librarian {
         Object foundLibrarian = dbb.findLibrarian(name);
         Librarian librarian = new Librarian();
 
-        try {
-            Gson gson = new Gson();
-            JSONParser parser = new JSONParser();
+        Gson gson = new Gson();
+        JSONParser parser = new JSONParser();
 
+        try {
             String librarianJsonString = gson.toJson(foundLibrarian);
             JSONObject librarianJsonObject = (JSONObject) parser.parse(librarianJsonString);
-
             librarian.setName((String) librarianJsonObject.get("name"));
             librarian.setLastName((String) librarianJsonObject.get("lastName"));
             librarian.setCirculation((Boolean) librarianJsonObject.get("circulation"));
             librarian.setProcessing((Boolean) librarianJsonObject.get("processing"));
             librarian.setInventory((Boolean) librarianJsonObject.get("inventory"));
             librarian.setAdmin((Boolean) librarianJsonObject.get("admin"));
-
         } catch(Exception e){
             e.printStackTrace();
         }
