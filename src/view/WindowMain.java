@@ -2345,7 +2345,7 @@ public class WindowMain extends javax.swing.JFrame {
 
         for(int i = 0; i< knjige.size(); i++) {
             k = knjige.get(i);
-            modelZaObradu.addRow(new Object[]{k.getGlavniStvarniNaslov(), k.getPrviPodatakOdg(), k.getUdkGrupa()});
+            modelZaObradu.addRow(new Object[]{k.getProperTitle(), k.getFirstStmntResp(), k.getUdkGrupa()});
         }
                 
         //MouseListener za odabir korisnika iz tabele       
@@ -2549,10 +2549,10 @@ public class WindowMain extends javax.swing.JFrame {
             for(int i = 0; i< korisnici.size(); i++) {
                 k = korisnici.get(i);
                 System.out.println("KORISNICI LISTA: "+k);
-                modelKorisnici.addRow(new Object[]{k.getName(), k.getLastName(), k.getParent(), k.getBirthDate(), k.getUserID()});
+                modelKorisnici.addRow(new Object[]{k.getName(), k.getLastName(), k.getParent(), k.getBirthDate(), k.getUserId()});
             }
         } else {
-           modelKorisnici.addRow(new Object[]{kor.getName(), kor.getLastName(), kor.getParent(), kor.getBirthDate(), kor.getUserID()});
+           modelKorisnici.addRow(new Object[]{kor.getName(), kor.getLastName(), kor.getParent(), kor.getBirthDate(), kor.getUserId()});
         }
         
                 
@@ -2591,10 +2591,10 @@ public class WindowMain extends javax.swing.JFrame {
                         System.out.println("User pretraga: "+(k.toString()));
                         korisnikIme.setText(k.getName());
                         korisnikPrezime.setText(k.getLastName());
-                        korisnickiBroj.setText(k.getUserID().toString());
+                        korisnickiBroj.setText(k.getUserId().toString());
                         korisnikDatumRodjenja.setText(k.getBirthDate());
                         korisnikDokument.setText(k.getDocument());
-                        korisnikBrojDokumenta.setText(k.getDocumentID().toString());
+                        korisnikBrojDokumenta.setText(k.getDocumentId().toString());
                         korisnikVrstaUclanjenja.setText(k.getJoinType());
 
                         // Brisanje podataka iz tabele korisnikClanarina i unos novih podataka
@@ -2616,7 +2616,7 @@ public class WindowMain extends javax.swing.JFrame {
                             if(!zaduzenja.isEmpty()){
                                 for(int i=0; i<zaduzenja.size(); i++){
                                     Book book = zaduzenja.get(i);
-                                    modelZaduzenja.addRow(new Object[]{book.getInvBroj(), book.getPrviPodatakOdg(), book.getGlavniStvarniNaslov(), book.getDatumZaduzenja(), book.getDatumRazduzenja()});
+                                    modelZaduzenja.addRow(new Object[]{book.getInventoryNum(), book.getFirstStmntResp(), book.getProperTitle(), book.getDateBorrowed(), book.getDateReturned()});
                                 }
                             }    
                         } catch (NullPointerException ex){
@@ -2636,7 +2636,7 @@ public class WindowMain extends javax.swing.JFrame {
                             if(!rezervacije.isEmpty()){
                                 for(int i=0; i<rezervacije.size(); i++){
                                     Book book = rezervacije.get(i);
-                                    modelRezervacije.addRow(new Object[]{book.getInvBroj(), book.getPrviPodatakOdg(), book.getGlavniStvarniNaslov(), book.getDatumZaduzenja(), book.getDatumRazduzenja()});
+                                    modelRezervacije.addRow(new Object[]{book.getInventoryNum(), book.getFirstStmntResp(), book.getProperTitle(), book.getDateBorrowed(), book.getDateReturned()});
                                 }
                             }
                         } catch (NullPointerException ex){
@@ -2799,8 +2799,8 @@ public class WindowMain extends javax.swing.JFrame {
         Book k = new Book();
         for(int i = 0; i< knjige.size(); i++) {
             k = knjige.get(i);
-            System.out.println("PRONADJENA KNJIGA: " +k.getGlavniStvarniNaslov()+k.getPrviPodatakOdg()+k.getGodinaIzdavanja()+k.getIzdavac()+k.getInvBroj());
-            model.addRow(new Object[]{k.getGlavniStvarniNaslov(), k.getPrviPodatakOdg(), k.getGodinaIzdavanja(), k.getIzdavac(), k.getInvBroj()});            
+            System.out.println("PRONADJENA KNJIGA: " +k.getProperTitle()+k.getFirstStmntResp()+k.getPublicationDate()+k.getPublisherName()+k.getInventoryNum());
+            model.addRow(new Object[]{k.getProperTitle(), k.getFirstStmntResp(), k.getPublicationDate(), k.getPublisherName(), k.getInventoryNum()});
         }
             
         //MouseListener za odabir knjige iz tabele  
@@ -3024,16 +3024,16 @@ public class WindowMain extends javax.swing.JFrame {
             for (int i = 0; i< book.size(); i++){
                 Book k = book.get(i);
                 
-                String title = k.getGlavniStvarniNaslov();
-                String creator = k.getPrviPodatakOdg();
-                String subject = k.getTematskaPododr();
-                String desc = k.getSadrzaj();
-                String publisher = k.getIzdavac();
-                Long date = k.getGodinaIzdavanja();
+                String title = k.getProperTitle();
+                String creator = k.getFirstStmntResp();
+                String subject = k.getTopicalSubdiv();
+                String desc = k.getSummary();
+                String publisher = k.getPublisherName();
+                Long date = k.getPublicationDate();
                 //String type = k.getTipDatoteke();
-                String identifier = k.getIsbn();
+                String identifier = k.getIsbnNum();
                 String source = k.getFizickiOpis();
-                String language = k.getJezikTeksta();
+                String language = k.getTextLang();
   
                             System.out.println("Podaci o unesenom digitalnom objektu "+ invNum+ title+creator+subject+desc+publisher+date+format+identifier+source+language);
 
@@ -3404,7 +3404,7 @@ public class WindowMain extends javax.swing.JFrame {
         String datumZaduzenja = dates.get(0);
         String datumRazduzenja = dates.get(1);
 
-        modelZ.addRow(new Object[]{k.getInvBroj(), k.getGlavniStvarniNaslov(), k.getPrviPodatakOdg(), datumZaduzenja, datumRazduzenja});
+        modelZ.addRow(new Object[]{k.getInventoryNum(), k.getProperTitle(), k.getFirstStmntResp(), datumZaduzenja, datumRazduzenja});
         modelR.removeRow(row);
     }//GEN-LAST:event_potvrdiRezervacijuDugmeActionPerformed
 
@@ -3426,7 +3426,7 @@ public class WindowMain extends javax.swing.JFrame {
         }
 
         DefaultTableModel model = (DefaultTableModel) tabelaKorisnikRezervacije.getModel();
-        model.addRow(new Object[]{k.getInvBroj(), k.getGlavniStvarniNaslov(), k.getPrviPodatakOdg()});
+        model.addRow(new Object[]{k.getInventoryNum(), k.getProperTitle(), k.getFirstStmntResp()});
     }//GEN-LAST:event_rezervisiKnjiguDugmeActionPerformed
 
     private void ponistiRezervacijuKorisnikActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ponistiRezervacijuKorisnikActionPerformed
@@ -3485,7 +3485,7 @@ public class WindowMain extends javax.swing.JFrame {
         String datumRazduzenja = dates.get(1);
 
         DefaultTableModel model = (DefaultTableModel) tabelaKorisnikZaduzenja.getModel();
-        model.addRow(new Object[]{k.getInvBroj(), k.getGlavniStvarniNaslov(), k.getPrviPodatakOdg(), datumZaduzenja, datumRazduzenja});
+        model.addRow(new Object[]{k.getInventoryNum(), k.getProperTitle(), k.getFirstStmntResp(), datumZaduzenja, datumRazduzenja});
 
     }//GEN-LAST:event_zaduziKorisnikaDugmeActionPerformed
 
@@ -3504,7 +3504,7 @@ public class WindowMain extends javax.swing.JFrame {
         User k = dbb.proveriRezervacije(invNumber);
         try {
             if (k.isValid())
-                infoBox("User pod brojem: " + k.getUserID() + ", je rezervisao knjigu", "korisnik");
+                infoBox("User pod brojem: " + k.getUserId() + ", je rezervisao knjigu", "korisnik");
         } catch (Exception e){
             System.out.println(e);
         }

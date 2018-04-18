@@ -15,13 +15,12 @@ public class Book {
 
     private DBBroker dbb;
 
-    private String _id, pismo, stanjeSloga, vrstaSloga, bibliografskiNivo, isbn, jezikKatalogizacije, jezikTeksta, zemljaIzdavanja,
-            kodoviZaIlustracije, glavniStvarniNaslov, prviPodatakOdg, mestoIzdavanja, izdavac, gradjaObim, dimenzije, napomena,
-            prviElementImeOdr, deoImenaOdr, prviElementTemaOdr, invBroj, tematskaPododr, geografskaPododr, udk, udkGrupa, prviElementImeOdg, deoImenaOdg, 
-            obradio, datumInventarisanja, inventator, nacinNabavke, cena, povez, datumZaduzenja, datumRazduzenja, sadrzaj, vrstaGradje, fizickiOpis;
-    private Long godinaIzdavanjaObrada, godinaIzdavanja, vrstaAutorstva, hijerarhijskiNivo;
-    private ArrayList<Long> rezervacije;
-    
+    private String _id, recordIdentifier, isbnNum, cataloguingLang, textLang, publicationCountry, illustrationCode, properTitle, firstStmntResp,
+            publicationPlace, publisherName, materialDesignation, dimensions, bibliographyNote, personalNameSubject,
+            partNameSubject, topicalNameSubject, inventoryNum, topicalSubdiv, geographicalSubdiv, udcNum, personalNameResp, partNameResp,
+            recordCreator, inventoryDate, inventoryCreator, procurementMethod, price, binding, dateBorrowed, dateReturned, summary;
+    private Long publicationDate, relatorCode;
+
     private void Book(){
     }
 
@@ -33,275 +32,236 @@ public class Book {
         this._id = _id;
     }
 
-    public void setPismo(String pismo) {
-        this.pismo = pismo;
+    public String getRecordIdentifier(){
+        return recordIdentifier;
     }
 
-    public void setStanjeSloga(String stanjeSloga) {
-        this.stanjeSloga = stanjeSloga;
+    public void setRecordIdentifier(String recordIdentifier){
+        this.recordIdentifier = recordIdentifier;
     }
 
-    public void setVrstaSloga(String vrstaSloga) {
-        this.vrstaSloga = vrstaSloga;
+    public void setCataloguingLang(String cataloguingLang) {
+        this.cataloguingLang = cataloguingLang;
     }
 
-    public void setBibliografskiNivo(String bibliografskiNivo) {
-        this.bibliografskiNivo = bibliografskiNivo;
+    public String getTextLang() {
+        return textLang;
     }
 
-    public void setHijerarhijskiNivo(Long hijerarhijskiNivo) {
-        this.hijerarhijskiNivo = hijerarhijskiNivo;
+    public void setTextLang(String textLang) {
+        this.textLang = textLang;
     }
 
-    public void setJezikKatalogizacije(String jezikKatalogizacije) {
-        this.jezikKatalogizacije = jezikKatalogizacije;
+    public void setPublicationCountry(String publicationCountry) {
+        this.publicationCountry = publicationCountry;
     }
 
-    public String getJezikTeksta() {
-        return jezikTeksta;
+    public void setIllustrationCode(String illustrationCode) {
+        this.illustrationCode = illustrationCode;
     }
 
-    public void setJezikTeksta(String jezikTeksta) {
-        this.jezikTeksta = jezikTeksta;
+    public String getProperTitle() {
+        return properTitle;
     }
 
-    public void setZemljaIzdavanja(String zemljaIzdavanja) {
-        this.zemljaIzdavanja = zemljaIzdavanja;
+    public void setProperTitle(String properTitle) {
+        this.properTitle = properTitle;
     }
 
-    public void setKodoviZaIlustracije(String kodoviZaIlustracije) {
-        this.kodoviZaIlustracije = kodoviZaIlustracije;
+    public String getFirstStmntResp() {
+        return firstStmntResp;
     }
 
-    public String getGlavniStvarniNaslov() {
-        return glavniStvarniNaslov;
+    public void setFirstStmntResp(String firstStmntResp) {
+        this.firstStmntResp = firstStmntResp;
     }
 
-    public void setGlavniStvarniNaslov(String glavniStvarniNaslov) {
-        this.glavniStvarniNaslov = glavniStvarniNaslov;
+    public void setPublicationPlace(String publicationPlace) {
+        this.publicationPlace = publicationPlace;
     }
 
-    public String getPrviPodatakOdg() {
-        return prviPodatakOdg;
+    public String getPublisherName() {
+        return publisherName;
     }
 
-    public void setPrviPodatakOdg(String prviPodatakOdg) {
-        this.prviPodatakOdg = prviPodatakOdg;
+    public void setPublisherName(String publisherName) {
+        this.publisherName = publisherName;
     }
 
-    public void setMestoIzdavanja(String mestoIzdavanja) {
-        this.mestoIzdavanja = mestoIzdavanja;
+    public void setMaterialDesignation(String materialDesignation) {
+        this.materialDesignation = materialDesignation;
     }
 
-    public String getIzdavac() {
-        return izdavac;
+    public void setDimensions(String dimensions) {
+        this.dimensions = dimensions;
     }
 
-    public void setIzdavac(String izdavac) {
-        this.izdavac = izdavac;
+    public void setBibliographyNote(String bibliographyNote) {
+        this.bibliographyNote = bibliographyNote;
     }
 
-    public void setGradjaObim(String gradjaObim) {
-        this.gradjaObim = gradjaObim;
+    public void setPersonalNameSubject(String personalNameSubject) {
+        this.personalNameSubject = personalNameSubject;
     }
 
-    public void setDimenzije(String dimenzije) {
-        this.dimenzije = dimenzije;
+    public void setPartNameSubject(String partNameSubject) {
+        this.partNameSubject = partNameSubject;
     }
 
-    public void setNapomena(String napomena) {
-        this.napomena = napomena;
+    public void setTopicalNameSubject(String topicalNameSubject) {
+        this.topicalNameSubject = topicalNameSubject;
     }
 
-    public void setPrviElementImeOdr(String prviElementImeOdr) {
-        this.prviElementImeOdr = prviElementImeOdr;
+    public String getTopicalSubdiv() {
+        return topicalSubdiv;
     }
 
-    public void setDeoImenaOdr(String deoImenaOdr) {
-        this.deoImenaOdr = deoImenaOdr;
+    public void setTopicalSubdiv(String topicalSubdiv) {
+        this.topicalSubdiv = topicalSubdiv;
     }
 
-    public void setPrviElementTemaOdr(String prviElementTemaOdr) {
-        this.prviElementTemaOdr = prviElementTemaOdr;
+    public void setGeographicalSubdiv(String geographicalSubdiv) {
+        this.geographicalSubdiv = geographicalSubdiv;
     }
 
-    public String getTematskaPododr() {
-        return tematskaPododr;
+    public void setUdcNum(String udcNum) {
+        this.udcNum = udcNum;
     }
 
-    public void setTematskaPododr(String tematskaPododr) {
-        this.tematskaPododr = tematskaPododr;
+    public void setPersonalNameResp(String personalNameResp) {
+        this.personalNameResp = personalNameResp;
     }
 
-    public void setGeografskaPododr(String geografskaPododr) {
-        this.geografskaPododr = geografskaPododr;
+    public void setPartNameResp(String partNameResp) {
+        this.partNameResp = partNameResp;
     }
 
-    public void setUdk(String udk) {
-        this.udk = udk;
+    public void setRecordCreator(String recordCreator) {
+        this.recordCreator = recordCreator;
     }
 
-    public String getUdkGrupa() {
-        return udkGrupa;
+    public String getDateBorrowed() {
+        return dateBorrowed;
     }
 
-    public void setUdkGrupa(String udkGrupa) {
-        this.udkGrupa = udkGrupa;
+    public void setDateBorrowed(String dateBorrowed) {
+        this.dateBorrowed = dateBorrowed;
     }
 
-    public void setPrviElementImeOdg(String prviElementImeOdg) {
-        this.prviElementImeOdg = prviElementImeOdg;
+    public String getDateReturned() {
+        return dateReturned;
     }
 
-    public void setDeoImenaOdg(String deoImenaOdg) {
-        this.deoImenaOdg = deoImenaOdg;
+    public void setDateReturned(String dateReturned) {
+        this.dateReturned = dateReturned;
     }
 
-    public void setObradio(String obradio) {
-        this.obradio = obradio;
+    public String getIsbnNum() {
+        return isbnNum;
     }
 
-    public String getDatumZaduzenja() {
-        return datumZaduzenja;
+    public void setIsbnNum(String isbnNum) {
+        this.isbnNum = isbnNum;
     }
 
-    public void setDatumZaduzenja(String datumZaduzenja) {
-        this.datumZaduzenja = datumZaduzenja;
+    public Long getPublicationDate() {
+        return publicationDate;
     }
 
-    public String getDatumRazduzenja() {
-        return datumRazduzenja;
+    public void setPublicationDate(Long publicationDate) {
+        this.publicationDate = publicationDate;
     }
 
-    public void setDatumRazduzenja(String datumRazduzenja) {
-        this.datumRazduzenja = datumRazduzenja;
+    public String getInventoryNum() {
+        return inventoryNum;
     }
 
-    public String getIsbn() {
-        return isbn;
+    public void setInventoryNum(String inventoryNum) {
+        this.inventoryNum = inventoryNum;
     }
 
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
+    public void setRelatorCode(Long relatorCode) {
+        this.relatorCode = relatorCode;
     }
 
-    public void setGodinaIzdavanjaObrada(Long godinaIzdavanjaObrada) {
-        this.godinaIzdavanjaObrada = godinaIzdavanjaObrada;
+    public String getSummary() {
+        return summary;
     }
 
-    public Long getGodinaIzdavanja() {
-        return godinaIzdavanja;
-    }
-
-    public void setGodinaIzdavanja(Long godinaIzdavanja) {
-        this.godinaIzdavanja = godinaIzdavanja;
-    }
-
-    public String getInvBroj() {
-        return invBroj;
-    }
-
-    public void setInvBroj(String invBroj) {
-        this.invBroj = invBroj;
-    }
-
-    public void setVrstaAutorstva(Long vrstaAutorstva) {
-        this.vrstaAutorstva = vrstaAutorstva;
-    }
-
-    public String getSadrzaj() {
-        return sadrzaj;
-    }
-
-    public void setSadrzaj(String sadrzaj) {
-        this.sadrzaj = sadrzaj;
-    }
-
-    public String getFizickiOpis() {
-        return fizickiOpis;
-    }
-
-    public void setFizickiOpis(String fizickiOpis) {
-        this.fizickiOpis = fizickiOpis;
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     // Checking if the object is valid
     public boolean isValid(){
-        return glavniStvarniNaslov != null && prviPodatakOdg != null && godinaIzdavanja != null && izdavac != null && invBroj != null;
+        return properTitle != null && firstStmntResp != null && publicationDate != null && publisherName != null && inventoryNum != null;
     }
 
     public boolean processBook(ArrayList<String> bookData){
 
         // Creating documents with data inputted by the librarian
-        Document identifikatorSloga = new Document("_id", "001").
-                append("7", bookData.get(0)).
-                append("a", bookData.get(1)).
-                append("b", bookData.get(2)).
-                append("c", bookData.get(3)).
-                append("d", Long.valueOf(bookData.get(4)));
-        Document isbn = new Document("_id", "010").
-                append("a", bookData.get(5));
-        Document opstiPodaciZaObradu = new Document("_id", "100").
-                append("c", Long.valueOf(bookData.get(6))).
-                append("h", bookData.get(7));
-        Document jezikPublikacije = new Document("_id", "101").
-                append("a", bookData.get(8));
-        Document zemljaIzdavanja = new Document("_id", "102").
-                append("a", bookData.get(9));
-        Document poljeKodiranihPodataka = new Document("_id", "105").
-                append("a", bookData.get(10));
-        Document stvarniNaslovOdgovornost = new Document("_id", "200").
-                append("a", bookData.get(11)).
-                append("f", bookData.get(12));
-        Document izdavanje = new Document("_id", "210").
-                append("a", bookData.get(13)).
-                append("c", bookData.get(14)).
-                append("d", Long.valueOf(bookData.get(15)));
-        Document materijalniOpis = new Document("_id", "215").
-                append("a", bookData.get(16)).
-                append("d", bookData.get(17));
-        Document napomenaOBibliografijama = new Document("_id", "320").
-                append("a", bookData.get(18));
-        Document fizickiOpis = new Document("_id", "324").
-                append("a", bookData.get(19));
-        Document kratakSadrzaj = new Document("_id", "330")
-                .append("a", bookData.get(20));
-        Document licnoImePredmetnaOdrednica = new Document("_id", "600").
-                append("a", bookData.get(21)).
-                append("b", bookData.get(22));
-        Document tematskaPredmetnaOdrednica = new Document("_id", "606").
-                append("a", bookData.get(23)).
-                append("x", bookData.get(24)).
-                append("y", bookData.get(25));
-        Document udk = new Document("_id", "675").
-                append("a", bookData.get(26)).
-                append("b", bookData.get(27));
-        Document licnoImePrimarnaOdgovornost = new Document("_id", "700").
-                append("4", Long.valueOf(bookData.get(28))).
-                append("a", bookData.get(29)).
-                append("b", bookData.get(30));
-        Document lokalnePotrebe = new Document("_id", "992").
-                append("b", bookData.get(31));
+        // TODO check 001 subfield. It shouldn't exist, but data should be there
+            Document recordIdentifierDoc = new Document("_id", "001")
+                    .append("001", bookData.get(0));
+            Document isbnDoc = new Document("_id", "010")
+                    .append("a", bookData.get(1));
+            Document generalProcessingDataDoc = new Document("_id", "100")
+                    .append("c", Long.valueOf(bookData.get(2)))
+                    .append("h", bookData.get(3));
+            Document itemLanguageDoc = new Document("_id", "101")
+                    .append("a", bookData.get(4));
+            Document publicationCountryDoc = new Document("_id", "102")
+                    .append("a", bookData.get(5));
+            Document codedDataFieldDoc = new Document("_id", "105")
+                    .append("a", bookData.get(6));
+            Document titleStmntRespDoc = new Document("_id", "200")
+                    .append("a", bookData.get(7))
+                    .append("f", bookData.get(8));
+            Document publicationDoc = new Document("_id", "210")
+                    .append("a", bookData.get(9))
+                    .append("c", bookData.get(10))
+                    .append("d", Long.valueOf(bookData.get(11)));
+            Document physicalDescriptionDoc = new Document("_id", "215")
+                    .append("a", bookData.get(12))
+                    .append("d", bookData.get(13));
+            Document internalBibliographiesDoc = new Document("_id", "320")
+                    .append("a", bookData.get(14));
+            Document summaryDoc = new Document("_id", "330")
+                    .append("a", bookData.get(15));
+            Document personalNameSubjectDoc = new Document("_id", "600")
+                    .append("a", bookData.get(16))
+                    .append("b", bookData.get(17));
+            Document topicalNameSubjectDoc = new Document("_id", "606")
+                    .append("a", bookData.get(18))
+                    .append("x", bookData.get(19))
+                    .append("y", bookData.get(20));
+            Document udcNumDoc = new Document("_id", "675")
+                    .append("a", bookData.get(21));
+            Document personalNameRespDoc = new Document("_id", "700")
+                    .append("4", Long.valueOf(bookData.get(22)))
+                    .append("a", bookData.get(23))
+                    .append("b", bookData.get(24));
+            Document localUseDoc = new Document("_id", "992")
+                    .append("b", bookData.get(25));
 
         // Combining previously created documents inside one new document
-        Document insertBook = new Document().
-                append("identifikatorSloga", identifikatorSloga).
-                append("isbn", isbn).
-                append("opstiPodaciZaObradu", opstiPodaciZaObradu).
-                append("jezikPublikacije", jezikPublikacije).
-                append("zemljaIzdavanja", zemljaIzdavanja).
-                append("poljeKodiranihPodataka", poljeKodiranihPodataka).
-                append("stvarniNaslovOdgovornost", stvarniNaslovOdgovornost).
-                append("izdavanje", izdavanje).
-                append("materijalniOpis", materijalniOpis).
-                append("napomenaOBibliografijama", napomenaOBibliografijama).
-                append("fizickiOpis", fizickiOpis).
-                append("kratakSadrzaj", kratakSadrzaj).
-                append("licnoImePredmetnaOdrednica", licnoImePredmetnaOdrednica).
-                append("tematskaPredmetnaOdrednica", tematskaPredmetnaOdrednica).
-                append("udk", udk).
-                append("licnoImePrimarnaOdgovornost", licnoImePrimarnaOdgovornost).
-                append("lokalnePotrebe", lokalnePotrebe);
+        Document insertBook = new Document()
+                .append("recordIdentifier", recordIdentifierDoc)
+                .append("isbnNum", isbnDoc)
+                .append("generalProcessingData", generalProcessingDataDoc)
+                .append("itemLanguage", itemLanguageDoc)
+                .append("publicationCountry", publicationCountryDoc)
+                .append("codedDataField", codedDataFieldDoc)
+                .append("stvarniNaslovOdgovornost", titleStmntRespDoc)
+                .append("publication", publicationDoc)
+                .append("physicalDescription", physicalDescriptionDoc)
+                .append("internalBibliographies", internalBibliographiesDoc)
+                .append("summary", summaryDoc)
+                .append("personalNameSubject", personalNameSubjectDoc)
+                .append("topicalNameSubject", topicalNameSubjectDoc)
+                .append("udcNum", udcNumDoc)
+                .append("personalNameResp", personalNameRespDoc)
+                .append("localUse", localUseDoc);
 
         // Query that inserts previously created document combined with the
         // information about inventory status of the processed book
@@ -317,14 +277,13 @@ public class Book {
         // New object with inventory data for the already processed book
         // provided by the librarian.
         BasicDBObject inv = new BasicDBObject().
-                append("inventarnaKnjiga", inventoryBookData.get(0)).
-                append("inventarniBroj", inventoryBookData.get(1)).
-                append("datumInventarisanja", inventoryBookData.get(2)).
-                append("inventator", inventoryBookData.get(3)).
-                append("udkGrupa", inventoryBookData.get(4)).
-                append("nacinNabavke", inventoryBookData.get(5)).
-                append("povez", inventoryBookData.get(6)).
-                append("cena", inventoryBookData.get(7));
+                append("inventoryBook", inventoryBookData.get(0)).
+                append("inventoryNum", inventoryBookData.get(1)).
+                append("inventoryDate", inventoryBookData.get(2)).
+                append("inventoryCreator", inventoryBookData.get(3)).
+                append("procurementMethod", inventoryBookData.get(5)).
+                append("binding", inventoryBookData.get(6)).
+                append("price", inventoryBookData.get(7));
 
         // Object that combines previosly created object and
         // updated information about inventory status of the processed book
@@ -357,67 +316,59 @@ public class Book {
 
         // Getting objects from the list, converting them to json Strings and parsing to JSONObject
         // Filling the 'Book' object with parsed JSON objects
+        Book book = new Book();
+        Gson gson = new Gson();
+        JSONParser parser = new JSONParser();
         try{
-            for (BasicDBObject obj : booksFound) {
-                Book book = new Book();
-                Gson gson = new Gson();
-                JSONParser parser = new JSONParser();
-
-                String strObj = gson.toJson(obj);
-
-                JSONObject jObj = (JSONObject) parser.parse(strObj);
-
-                JSONObject proc = (JSONObject) jObj.get("processed");
-                JSONObject idSloga = (JSONObject) proc.get("identifikatorSloga");
-                JSONObject isbn = (JSONObject) proc.get("isbn");
-                JSONObject opstiPodaci = (JSONObject) proc.get("opstiPodaciZaObradu");
-                JSONObject jezik = (JSONObject) proc.get("jezikPublikacije");
-                JSONObject zemlja = (JSONObject) proc.get("zemljaIzdavanja");
-                JSONObject kodPodaci = (JSONObject) proc.get("poljeKodiranihPodataka");
-                JSONObject naslovOdgovornost = (JSONObject) proc.get("stvarniNaslovOdgovornost");
-                JSONObject izdavanje = (JSONObject) proc.get("izdavanje");
-                JSONObject materijalniOpis = (JSONObject) proc.get("materijalniOpis");
-                JSONObject bibliografije = (JSONObject) proc.get("napomenaOBibliografijama");
-                JSONObject licnoImeOdr = (JSONObject) proc.get("licnoImePredmetnaOdrednica");
-                JSONObject tematskaOdr = (JSONObject) proc.get("tematskaPredmetnaOdrednica");
-                JSONObject udk = (JSONObject) proc.get("udk");
-                JSONObject licnoImePrim = (JSONObject) proc.get("licnoImePrimarnaOdgovornost");
-                JSONObject lokalnePotrebe = (JSONObject) proc.get("lokalnePotrebe");
+            for (BasicDBObject temp : booksFound) {
+                String bookJsonString = gson.toJson(temp);
+                JSONObject bookJsonObject = (JSONObject) parser.parse(bookJsonString);
+                JSONObject processed = (JSONObject) bookJsonObject.get("processed");
+                JSONObject recordIdentifier = (JSONObject) processed.get("recordIdentifier");
+                JSONObject isbnNum = (JSONObject) processed.get("isbnNum");
+                JSONObject generalProcessingData = (JSONObject) processed.get("generalProcessingData");
+                JSONObject textLang = (JSONObject) processed.get("textLang");
+                JSONObject publicationCountry = (JSONObject) processed.get("publicationCountry");
+                JSONObject codedDataField = (JSONObject) processed.get("codedDataField");
+                JSONObject titleStmntResp = (JSONObject) processed.get("titleStmntResp");
+                JSONObject publication = (JSONObject) processed.get("publication");
+                JSONObject physicalDescription = (JSONObject) processed.get("physicalDescription");
+                JSONObject internalBibliographies = (JSONObject) processed.get("internalBibliographies");
+                JSONObject summary = (JSONObject) processed.get("summary");
+                JSONObject personalNameSubject = (JSONObject) processed.get("personalNameSubject");
+                JSONObject topicalNameSubject = (JSONObject) processed.get("topicalNameSubject");
+                JSONObject udcNum = (JSONObject) processed.get("udcNum");
+                JSONObject personalNameResp = (JSONObject) processed.get("personalNameResp");
+                JSONObject localUse = (JSONObject) processed.get("localUse");
 
 
                 //TODO Isprobati novi metod koji bi koristio BasicDBObject i time izbacio sve ove JSONObjecte
                 // Da li je sve ovo neophodno? Planirano je da se koristi za unosenje izmena u obradu, a te funkcionalnosti mozda nece biti
-                book.setId(((ObjectId) obj.get("_id")).toHexString());
-                book.setPismo((String) idSloga.get("7"));
-                book.setStanjeSloga((String) idSloga.get("a"));
-                book.setVrstaSloga((String) idSloga.get("b"));
-                book.setBibliografskiNivo((String) idSloga.get("c"));
-                book.setHijerarhijskiNivo((Long) idSloga.get("d"));
-                book.setIsbn((String) isbn.get("a"));
-                book.setGodinaIzdavanjaObrada((Long) opstiPodaci.get("c"));
-                book.setJezikKatalogizacije((String) opstiPodaci.get("h"));
-                book.setJezikTeksta((String) jezik.get("a"));
-                book.setZemljaIzdavanja((String) zemlja.get("a"));
-                book.setKodoviZaIlustracije((String) kodPodaci.get("a"));
-                book.setGlavniStvarniNaslov((String) naslovOdgovornost.get("a"));
-                book.setPrviPodatakOdg((String) naslovOdgovornost.get("f"));
-                book.setMestoIzdavanja((String) izdavanje.get("a"));
-                book.setIzdavac((String) izdavanje.get("c"));
-                book.setGodinaIzdavanja((Long) izdavanje.get("d"));
-                book.setGradjaObim((String) materijalniOpis.get("a"));
-                book.setDimenzije((String) materijalniOpis.get("d"));
-                book.setNapomena((String) bibliografije.get("a"));
-                book.setPrviElementImeOdr((String) licnoImeOdr.get("a"));
-                book.setDeoImenaOdr((String) licnoImeOdr.get("b"));
-                book.setPrviElementTemaOdr((String) tematskaOdr.get("a"));
-                book.setTematskaPododr((String) tematskaOdr.get("x"));
-                book.setGeografskaPododr((String) tematskaOdr.get("y"));
-                book.setUdk((String) udk.get("a"));
-                book.setUdkGrupa((String) udk.get("b"));
-                book.setVrstaAutorstva((Long) licnoImePrim.get("4"));
-                book.setPrviElementImeOdg((String) licnoImePrim.get("a"));
-                book.setDeoImenaOdg((String) licnoImePrim.get("b"));
-                book.setObradio((String) lokalnePotrebe.get("b"));
+                book.setId(((ObjectId) temp.get("_id")).toHexString());
+                book.setIsbnNum((String) isbnNum.get("a"));
+                book.setCataloguingLang((String) generalProcessingData.get("h"));
+                book.setTextLang((String) textLang.get("a"));
+                book.setPublicationCountry((String) publicationCountry.get("a"));
+                book.setIllustrationCode((String) codedDataField.get("a"));
+                book.setProperTitle((String) titleStmntResp.get("a"));
+                book.setFirstStmntResp((String) titleStmntResp.get("f"));
+                book.setPublicationPlace((String) publication.get("a"));
+                book.setPublisherName((String) publication.get("c"));
+                book.setPublicationDate((Long) publication.get("d"));
+                book.setMaterialDesignation((String) physicalDescription.get("a"));
+                book.setDimensions((String) physicalDescription.get("d"));
+                book.setBibliographyNote((String) internalBibliographies.get("a"));
+                book.setSummary((String) summary.get("a"));
+                book.setPersonalNameSubject((String) personalNameSubject.get("a"));
+                book.setPartNameSubject((String) personalNameSubject.get("b"));
+                book.setTopicalNameSubject((String) topicalNameSubject.get("a"));
+                book.setTopicalSubdiv((String) topicalNameSubject.get("x"));
+                book.setGeographicalSubdiv((String) topicalNameSubject.get("y"));
+                book.setUdcNum((String) udcNum.get("a"));
+                book.setRelatorCode((Long) personalNameResp.get("4"));
+                book.setPersonalNameResp((String) personalNameResp.get("a"));
+                book.setPartNameResp((String) personalNameResp.get("b"));
+                book.setRecordCreator((String) localUse.get("b"));
 
                 books.add(book);
             }
@@ -432,28 +383,28 @@ public class Book {
     // Change method 'findBookByInventoryNum' to return ArrayList
     public Book borrowBook(String invNum){
 
-        BasicDBObject query = new BasicDBObject("inventoryData.inventarniBroj", invNum).
+        BasicDBObject query = new BasicDBObject("inventoryData.inventoryNum", invNum).
                 append("inventory", true);
 
         Book book = new Book();
         Object foundBook = dbb.findBookByInventoryNum(query);
 
         // Parsing JSON file, filling the 'Book' object
+        Gson gson = new Gson();
+        JSONParser parser = new JSONParser();
         try {
-            Gson gson = new Gson();
-            JSONParser parser = new JSONParser();
-            String nameObj = gson.toJson(foundBook);
-            JSONObject jObj = (JSONObject) parser.parse(nameObj);
-            JSONObject proc = (JSONObject) jObj.get("processed");
-            JSONObject inv = (JSONObject) jObj.get("inventoryData");
-            JSONObject naslovOdgovornost = (JSONObject) proc.get("stvarniNaslovOdgovornost");
-            JSONObject izdavanje = (JSONObject) proc.get("izdavanje");
+            String bookJsonString = gson.toJson(foundBook);
+            JSONObject bookJsonObject = (JSONObject) parser.parse(bookJsonString);
+            JSONObject processed = (JSONObject) bookJsonObject.get("processed");
+            JSONObject inventoryData = (JSONObject) bookJsonObject.get("inventoryData");
+            JSONObject titleStmntResp = (JSONObject) processed.get("titleStmntResp");
+            JSONObject publication = (JSONObject) processed.get("publication");
 
-            book.setGlavniStvarniNaslov((String) naslovOdgovornost.get("a"));
-            book.setPrviPodatakOdg((String) naslovOdgovornost.get("f"));
-            book.setGodinaIzdavanja((Long) izdavanje.get("d"));
-            book.setIzdavac((String) izdavanje.get("c"));
-            book.setInvBroj((String) inv.get("inventarniBroj"));
+            book.setProperTitle((String) titleStmntResp.get("a"));
+            book.setFirstStmntResp((String) titleStmntResp.get("f"));
+            book.setPublicationDate((Long) publication.get("d"));
+            book.setPublisherName((String) publication.get("c"));
+            book.setInventoryNum((String) inventoryData.get("inventoryNum"));
         } catch(Exception e){
             e.printStackTrace();
         }
@@ -476,7 +427,7 @@ public class Book {
 
     public ArrayList<Book> findBooksByYear(Long year){
         BasicDBObject query = new BasicDBObject();
-        query.put("processed.izdavanje.d", year);
+        query.put("processed.publication.d", year);
         query.put("inventory", true);
 
         ArrayList<Object> booksFound = dbb.findBooksByParameter(query);
@@ -488,36 +439,35 @@ public class Book {
         ArrayList<Book> books = new ArrayList<>();
         Book book = new Book();
         BasicDBObject query = new BasicDBObject();
-        query.put("inventoryData.inventarniBroj", invNum);
+        query.put("inventoryData.inventoryNum", invNum);
         query.put("inventory", true);
 
+        Gson gson = new Gson();
+        JSONParser parser = new JSONParser();
+        Object foundBook = dbb.findBookByInventoryNum(query);
         try {
-            Gson gson = new Gson();
-            JSONParser parser = new JSONParser();
-            Object foundBook = dbb.findBookByInventoryNum(query);
-            String nameObj = gson.toJson(foundBook);
-            JSONObject jObj = (JSONObject) parser.parse(nameObj);
-            JSONObject proc = (JSONObject) jObj.get("processed");
-            JSONObject inv = (JSONObject) jObj.get("inventoryData");
-            JSONObject naslovOdgovornost = (JSONObject) proc.get("stvarniNaslovOdgovornost");
-            JSONObject izdavanje = (JSONObject) proc.get("izdavanje");
-            JSONObject tematskaPodOdr = (JSONObject) proc.get("tematskaPredmetnaOdrednica");
-            JSONObject sadrzaj = (JSONObject) proc.get("kratakSadrzaj");
-            JSONObject isbn = (JSONObject) proc.get("isbn");
-            JSONObject fizickiOpis = (JSONObject) proc.get("fizickiOpis");
-            JSONObject opstiPodaci = (JSONObject) proc.get("opstiPodaciZaObradu");
+            String bookJsonString = gson.toJson(foundBook);
+            JSONObject bookJsonObject = (JSONObject) parser.parse(bookJsonString);
+            JSONObject processed = (JSONObject) bookJsonObject.get("processed");
+            JSONObject inventoryData = (JSONObject) bookJsonObject.get("inventoryData");
+            JSONObject titleStmntResp = (JSONObject) processed.get("titleStmntResp");
+            JSONObject publication = (JSONObject) processed.get("publication");
+            JSONObject topicalNameSubject = (JSONObject) processed.get("topicalNameSubject");
+            JSONObject summary = (JSONObject) processed.get("summary");
+            JSONObject isbnNum = (JSONObject) processed.get("isbnNum");
+            JSONObject physicalDescription = (JSONObject) processed.get("physicalDescription");
+            JSONObject generalProcessingData = (JSONObject) processed.get("generalProcessingData");
 
 
-            book.setGlavniStvarniNaslov((String) naslovOdgovornost.get("a"));
-            book.setPrviPodatakOdg((String) naslovOdgovornost.get("f"));
-            book.setGodinaIzdavanja((Long) izdavanje.get("d"));
-            book.setIzdavac((String) izdavanje.get("c"));
-            book.setInvBroj((String) inv.get("inventarniBroj"));
-            book.setTematskaPododr((String) tematskaPodOdr.get("x"));
-            book.setSadrzaj((String) sadrzaj.get("a"));
-            book.setIsbn((String) isbn.get("a"));
-            book.setFizickiOpis((String) fizickiOpis.get("a"));
-            book.setJezikTeksta((String) opstiPodaci.get("h"));
+            book.setProperTitle((String) titleStmntResp.get("a"));
+            book.setFirstStmntResp((String) titleStmntResp.get("f"));
+            book.setPublicationDate((Long) publication.get("d"));
+            book.setPublisherName((String) publication.get("c"));
+            book.setInventoryNum((String) inventoryData.get("inventoryNum"));
+            book.setTopicalSubdiv((String) topicalNameSubject.get("x"));
+            book.setSummary((String) summary.get("a"));
+            book.setIsbnNum((String) isbnNum.get("a"));
+            book.setTextLang((String) generalProcessingData.get("h"));
 
             books.add(book);
         } catch(Exception e){
@@ -538,23 +488,23 @@ public class Book {
 
         // Getting the object from the list, converting it to json Strings and parsing to JSONObject
         // Filling the 'Book' object with parsed JSON objects
+        Book book = new Book();
+        Gson gson = new Gson();
+        JSONParser parser = new JSONParser();
         try {
-            for (Object b : booksToParse) {
-                Book book = new Book();
-                Gson gson = new Gson();
-                JSONParser parser = new JSONParser();
-                String nameObj = gson.toJson(b);
-                JSONObject jObj = (JSONObject) parser.parse(nameObj);
-                JSONObject proc = (JSONObject) jObj.get("processed");
-                JSONObject inv = (JSONObject) jObj.get("inventoryData");
-                JSONObject naslovOdgovornost = (JSONObject) proc.get("stvarniNaslovOdgovornost");
-                JSONObject izdavanje = (JSONObject) proc.get("izdavanje");
+            for (Object temp : booksToParse) {
+                String bookJsonString = gson.toJson(temp);
+                JSONObject bookJsonObject = (JSONObject) parser.parse(bookJsonString);
+                JSONObject processed = (JSONObject) bookJsonObject.get("processed");
+                JSONObject inventoryData = (JSONObject) bookJsonObject.get("inventoryData");
+                JSONObject titleStmntResp = (JSONObject) processed.get("titleStmntResp");
+                JSONObject publication = (JSONObject) processed.get("publication");
 
-                book.setGlavniStvarniNaslov((String) naslovOdgovornost.get("a"));
-                book.setPrviPodatakOdg((String) naslovOdgovornost.get("f"));
-                book.setGodinaIzdavanja((Long) izdavanje.get("d"));
-                book.setIzdavac((String) izdavanje.get("c"));
-                book.setInvBroj((String) inv.get("inventarniBroj"));
+                book.setProperTitle((String) titleStmntResp.get("a"));
+                book.setFirstStmntResp((String) titleStmntResp.get("f"));
+                book.setPublicationDate((Long) publication.get("d"));
+                book.setPublisherName((String) publication.get("c"));
+                book.setInventoryNum((String) inventoryData.get("inventoryNum"));
 
                 books.add(book);
             }
@@ -568,5 +518,4 @@ public class Book {
     private ArrayList<String> split(String toSplit){
         return new ArrayList<>();
     }
-
 }

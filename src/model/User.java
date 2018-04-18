@@ -15,10 +15,8 @@ public class User {
     private DBBroker dbb;
 
     private String _id, name, lastName, parent, document, joinType, birthDate, joinDate, expireDate, bookTitle, bookAuthor, bookTakenDate, bookReturnDate;
-    private Long documentID, userID, invNumber, price;
+    private Long documentId, userId, inventoryNum, price;
 
-    private ArrayList<Book> booksBorrowed = new ArrayList<>();
-    
     public void User() {
     }
 
@@ -62,20 +60,20 @@ public class User {
         this.joinType = joinType;
     }
 
-    public Long getDocumentID() {
-        return documentID;
+    public Long getDocumentId() {
+        return documentId;
     }
 
-    public void setDocumentID(Long documentID) {
-        this.documentID = documentID;
+    public void setDocumentId(Long documentId) {
+        this.documentId = documentId;
     }
 
-    public Long getUserID() {
-        return userID;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUserID(Long userID) {
-        this.userID = userID;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getBirthDate() {
@@ -112,7 +110,7 @@ public class User {
 
     // Checking if the object is valid
     public boolean isValid(){
-        return name != null && lastName != null && userID != null;
+        return name != null && lastName != null && userId != null;
     }
 
     public boolean addNewUser(Map<String, Object> userData){
@@ -127,8 +125,8 @@ public class User {
                 append("birthDate", userData.get("birthDate")).
                 append("parent", userData.get("parent")).
                 append("document", userData.get("document")).
-                append("documentID", userData.get("documentId")).
-                append("userID", userData.get("userId")).
+                append("documentId", userData.get("documentId")).
+                append("userId", userData.get("userId")).
                 append("membership", membership);
 
         addUserHistory((Long) userData.get("userId"));
@@ -173,23 +171,23 @@ public class User {
             case "borrow":
                 return dbb.userBorrowBook(userId, book, dates);
             case "prolong":
-                return dbb.updateReturnDate(userId, book.getInvBroj(), dates);
+                return dbb.updateReturnDate(userId, book.getInventoryNum(), dates);
             default:
                 return false;
         }
     }
 
     // TODO relocate queries to dbb?
-    public boolean returnBook(Long userId, String invNumber){
+    public boolean returnBook(Long userId, String inventoryNum){
 
         // Finding the User and the book by inventory number borrowed by the User
         // '$pull' command deletes the found book from the array
-        BasicDBObject queryUser = new BasicDBObject("userID", userId);
-        BasicDBObject queryBook = new BasicDBObject("invNumber", invNumber);
-        BasicDBObject queryBooks = new BasicDBObject("zaduzenja", queryBook);
-        BasicDBObject deleteBook = new BasicDBObject("$pull", queryBooks);
+        BasicDBObject userQuery = new BasicDBObject("userId", userId);
+        BasicDBObject bookQuery = new BasicDBObject("inventoryNum", inventoryNum);
+        BasicDBObject borrowedQuery = new BasicDBObject("zaduzenja", bookQuery);
+        BasicDBObject returnBook = new BasicDBObject("$pull", borrowedQuery);
 
-        ArrayList<BasicDBObject> queries = getQueries(queryUser, deleteBook);
+        ArrayList<BasicDBObject> queries = getQueries(userQuery, returnBook);
         return dbb.userReturnBook(queries);
     }
 
@@ -198,21 +196,21 @@ public class User {
     }
 
     // TODO relocate queries to dbb?
-    public boolean addBookToUserHistory(Long userID, Book book){
+    public boolean addBookToUserHistory(Long userId, Book book){
 
         ArrayList<String> dates = getDates();
 
         BasicDBObject push = new BasicDBObject();
         push.put("$push",
-                new BasicDBObject("zaduzenja",
-                        new BasicDBObject("bookName", book.getGlavniStvarniNaslov()).
-                                append("bookAuthor", book.getPrviPodatakOdg()).
-                                append("invNumber", book.getInvBroj()).
+                new BasicDBObject("borrowedBooks",
+                        new BasicDBObject("bookName", book.getProperTitle()).
+                                append("bookAuthor", book.getFirstStmntResp()).
+                                append("inventoryNum", book.getInventoryNum()).
                                 append("bookTaken", dates.get(0))
                 ));
 
         BasicDBObject query = new BasicDBObject();
-        query.put("userID", userID);
+        query.put("userId", userId);
 
         ArrayList<BasicDBObject> queries = getQueries(query, push);
         return dbb.updateUserHistory(queries);
@@ -227,14 +225,14 @@ public class User {
         ArrayList<Book> books = new ArrayList<>();
         BasicDBObject userQuery = new BasicDBObject();
         BasicDBObject borrowedQuery = new BasicDBObject();
-        userQuery.put("userID", userId);
-        borrowedQuery.put("zaduzenja", userQuery);
+        userQuery.put("userId", userId);
+        borrowedQuery.put("borrowedBooks", userQuery);
 
         String collection = "";
         if(type.equals("current"))
-            collection = "korisnici";
+            collection = "users";
         else if(type.equals("history"))
-            collection = "istorijaZaduzenja";
+            collection = "borrowedHistory";
 
         Object foundUser = dbb.findBooksBorrowedByUser(userQuery, collection);
 
@@ -246,18 +244,18 @@ public class User {
                 JSONObject userJsonObject = (JSONObject) parser.parse(userJsonString);
 
                 // TODO convert JSONObject to string and split to get an array?
-                ArrayList<Object> booksInHistory = (ArrayList<Object>) userJsonObject.get("zaduzenja");
+                ArrayList<Object> booksInHistory = (ArrayList<Object>) userJsonObject.get("borrowedBooks");
 
                 for (Object temp : booksInHistory) {
                     Book book = new Book();
-                    String nameObj = gson.toJson(temp);
-                    JSONObject jObj = (JSONObject) parser.parse(nameObj);
+                    String bookJsonString = gson.toJson(temp);
+                    JSONObject bookJsonObject = (JSONObject) parser.parse(bookJsonString);
 
-                    book.setGlavniStvarniNaslov((String) jObj.get("bookName"));
-                    book.setPrviPodatakOdg((String) jObj.get("bookAuthor"));
-                    book.setDatumZaduzenja((String) jObj.get("bookTaken"));
-                    book.setDatumRazduzenja((String) jObj.get("bookReturn"));
-                    book.setInvBroj((String) jObj.get("invNumber"));
+                    book.setProperTitle((String) bookJsonObject.get("bookName"));
+                    book.setFirstStmntResp((String) bookJsonObject.get("bookAuthor"));
+                    book.setDateBorrowed((String) bookJsonObject.get("bookTaken"));
+                    book.setDateReturned((String) bookJsonObject.get("bookReturn"));
+                    book.setInventoryNum((String) bookJsonObject.get("inventoryNum"));
 
                     books.add(book);
                 }
@@ -269,7 +267,7 @@ public class User {
     }
 
     // TODO relocate queries to dbb?
-    public boolean reservationAction(String type, String invNumber, Long userID){
+    public boolean reservationAction(String type, String inventoryNum, Long userId){
 
         String command = "";
 
@@ -278,8 +276,8 @@ public class User {
         else if(type.equals("cancel"))
             command = "$pull";
 
-        BasicDBObject book = new BasicDBObject("inventoryData.inventarniBroj", invNumber);
-        BasicDBObject query = new BasicDBObject(command, new BasicDBObject("reservations", userID));
+        BasicDBObject book = new BasicDBObject("inventoryData.inventoryNum", inventoryNum);
+        BasicDBObject query = new BasicDBObject(command, new BasicDBObject("reservations", userId));
 
         ArrayList<BasicDBObject> queries = getQueries(book, query);
         return dbb.updateBookData(queries);
@@ -287,37 +285,29 @@ public class User {
 
     // TODO place this method in Book class? Rewrite method?
     // Method checks if the book is reserved by someone after being returned, and returns the User that reserved it
-    public User checkIfReserved(String invNumber) {
+    public User checkIfReserved(String inventoryNum) {
 
         User user = new User();
-        ArrayList<Object> reservations;
-        String usrRes;
 
-        BasicDBObject query = new BasicDBObject("inventoryData.inventarniBroj", invNumber);
-
+        BasicDBObject query = new BasicDBObject("inventoryData.inventarniBroj", inventoryNum);
         Object book = dbb.findBookByInventoryNum(query);
 
+        Gson gson = new Gson();
+        JSONParser parser = new JSONParser();
         try{
-            Gson gson = new Gson();
-            JSONParser parser = new JSONParser();
             String bookJsonString = gson.toJson(book);
             JSONObject bookJsonObject = (JSONObject) parser.parse(bookJsonString);
 
-            // TODO convert JSONObject to String and split to an array?
-            reservations = (ArrayList<Object>) bookJsonObject.get("reservations");
-            Object o = reservations.get(0);
-            usrRes = o.toString();
+            Object reservations = bookJsonObject.get("reservations");
+            String reservedBy = reservations.toString();
 
-            String strArray[] = usrRes.split(" ");
-            String str = strArray[0];
-            Long usr = Long.valueOf(str);
+            String[] arr = reservedBy.split(" ");
+            Long userId = Long.valueOf(arr[0]);
 
-            if(!usrRes.isEmpty()) {
-                user = findUserById(usr, "userId");
-            }
-            else {
-                user = null;
-            }
+            if(!reservedBy.isEmpty())
+                return findUserById(userId, "userId");
+            else
+                return null;
         } catch(Exception e){
             e.printStackTrace();
         }
@@ -328,23 +318,21 @@ public class User {
         Gson gson = new Gson();
         JSONParser parser = new JSONParser();
         User user = new User();
-        String nameObj;
-        JSONObject jObj;
         try{
-            nameObj = gson.toJson(userToParse);
-            jObj = (JSONObject) parser.parse(nameObj);
-            JSONObject mObj = (JSONObject) jObj.get("membership");
-            user.setName((String) jObj.get("name"));
-            user.setLastName((String) jObj.get("lastName"));
-            user.setParent((String) jObj.get("parent"));
-            user.setBirthDate((String) jObj.get("birthDate"));
-            user.setUserID((Long) jObj.get("userID"));
-            user.setDocument((String) jObj.get("document"));
-            user.setDocumentID((Long) jObj.get("documentID"));
-            user.setPrice((Long) mObj.get("price"));
-            user.setJoinType((String) mObj.get("joinType"));
-            user.setJoinDate((String) mObj.get("joinDate"));
-            user.setExpireDate((String) mObj.get("expireDate"));
+            String userJsonString = gson.toJson(userToParse);
+            JSONObject userJsonObject = (JSONObject) parser.parse(userJsonString);
+            JSONObject membershipJsonObject = (JSONObject) userJsonObject.get("membership");
+            user.setName((String) userJsonObject.get("name"));
+            user.setLastName((String) userJsonObject.get("lastName"));
+            user.setParent((String) userJsonObject.get("parent"));
+            user.setBirthDate((String) userJsonObject.get("birthDate"));
+            user.setUserId((Long) userJsonObject.get("userId"));
+            user.setDocument((String) userJsonObject.get("document"));
+            user.setDocumentId((Long) userJsonObject.get("documentId"));
+            user.setPrice((Long) membershipJsonObject.get("price"));
+            user.setJoinType((String) membershipJsonObject.get("joinType"));
+            user.setJoinDate((String) membershipJsonObject.get("joinDate"));
+            user.setExpireDate((String) membershipJsonObject.get("expireDate"));
         } catch (Exception e){
             e.printStackTrace();
         }

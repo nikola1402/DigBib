@@ -22,7 +22,7 @@ public class DBBroker {
     private DB gfsDb = client.getDB("test");
 
     public boolean createBook(Document query){
-        MongoCollection<Document> coll = db.getCollection("knjige");
+        MongoCollection<Document> coll = db.getCollection("book");
         coll.insertOne(query);
         return true;
     }
@@ -30,7 +30,7 @@ public class DBBroker {
     public ArrayList<BasicDBObject> findBooksToProcess(BasicDBObject query){
 
         // This type of connection is because only through BasicDBObject we can get the correct _id
-        MongoCollection<BasicDBObject> coll = db.getCollection("knjige", BasicDBObject.class);
+        MongoCollection<BasicDBObject> coll = db.getCollection("book", BasicDBObject.class);
 
         ArrayList<BasicDBObject> booksFound = new ArrayList<>();
 
@@ -44,60 +44,34 @@ public class DBBroker {
 
 
     public Object findBookByInventoryNum(BasicDBObject query){
-        MongoCollection<Document> coll = db.getCollection("knjige");
+        MongoCollection<Document> coll = db.getCollection("book");
         return coll.find(query).first();
     }
 
     public ArrayList<Object> findBooksByTitleAuthorPublisher(String type, ArrayList<String> param, Integer wordCount){
 
-        MongoCollection<Document> coll = db.getCollection("knjige");
+        MongoCollection<Document> coll = db.getCollection("book");
 
         String attribute = "";
         switch (type) {
             case "title":
-                attribute = "processed.stvarniNaslovOdgovornost.a";
+                attribute = "processed.titleStmntResp.a";
                 break;
             case "author":
-                attribute = "processed.stvarniNaslovOdgovornost.f";
+                attribute = "processed.titleStmntResp.f";
                 break;
             case "publisher":
-                attribute = "processed.izdavanje.c";
+                attribute = "processed.publication.c";
                 break;
         }
 
-        // Based on the number of the words in the title, different queries are prepared
-        // $regex compares Strings
-        // $options i neglects the differences between capital and small letteres in Strings
-        BasicDBObject query;
-
-        // TODO shorten these cases
-        switch (wordCount) {
-            case 1:
-                query= new BasicDBObject(attribute, new BasicDBObject("$regex", param.get(0)).
-                        append("$options", "i"));
-                break;
-            case 2:
-            {
-                query = new BasicDBObject(attribute, new BasicDBObject("$regex", param.get(0)).
-                        append("$regex", param.get(1)).
-                        append("$options", "i"));
-                break;
-            }
-            default:
-            {
-                query = new BasicDBObject(attribute, new BasicDBObject("$regex", param.get(0)).
-                        append("$regex", param.get(1)).
-                        append("$regex", param.get(2)).
-                        append("$options", "i"));
-                break;
-            }
-        }
+        BasicDBObject query = prepareQuery(attribute, param, wordCount);
         query.put("inventory", true);
         return iterateDB(coll, query);
     }
 
     public ArrayList<Object> findBooksByParameter(BasicDBObject query){
-        MongoCollection<Document> coll = db.getCollection("knjige");
+        MongoCollection<Document> coll = db.getCollection("book");
         return iterateDB(coll, query);
     }
 
@@ -105,38 +79,38 @@ public class DBBroker {
 
         // GridFS works only with DBObjects, it doesn't accept MongoDatabase
         // Connecting to GridFS collection 'objects'
-        GridFS objects = new GridFS(gfsDb, "objekti");
+        GridFS objects = new GridFS(gfsDb, "digitalObject");
         
         GridFSInputFile pdf = objects.createFile((File) map.get("file"));
 
-        BasicDBObject meta = new BasicDBObject("inventoryNumber", map.get("inventoryNumber")).
-                append("title", map.get("title")).
-                append("creator", map.get("creator")).
-                append("subject", map.get("subject")).
-                append("description", map.get("description")).
-                append("publisher", map.get("publisher")).
-                append("date", map.get("date")).
-                append("format", map.get("format")).
-                append("identifier", map.get("identifier")).
-                append("source", map.get("source")).
-                append("language", map.get("language")).
-                append("collection", map.get("collection"));
+        BasicDBObject meta = new BasicDBObject("inventoryNum", map.get("inventoryNum"))
+                .append("title", map.get("title"))
+                .append("creator", map.get("creator"))
+                .append("subject", map.get("subject"))
+                .append("description", map.get("description"))
+                .append("publisher", map.get("publisher"))
+                .append("date", map.get("date"))
+                .append("format", map.get("format"))
+                .append("identifier", map.get("identifier"))
+                .append("source", map.get("source"))
+                .append("language", map.get("language"))
+                .append("collection", map.get("collection"));
         
         pdf.setMetaData(meta);
         pdf.save();
         return true;
     }
     
-    public GridFSDBFile findDigitalBookByInventoryNum(String invNum){
-        GridFS gf = new GridFS(gfsDb, "objekti");
+    public GridFSDBFile findDigitalBookByInventoryNum(String inventoryNum){
+        GridFS gf = new GridFS(gfsDb, "digitalObject");
         BasicDBObject query = new BasicDBObject();
-        query.put("metadata.inventoryNumber", invNum);
+        query.put("metadata.inventoryNum", inventoryNum);
         return gf.findOne(query);
     }
     
     public List<GridFSDBFile> findDigitalBooksByTitleAuthorPublisher(String type, ArrayList<String> param, Integer wordCount){
         
-        GridFS gf = new GridFS(gfsDb, "objekti");
+        GridFS gf = new GridFS(gfsDb, "digitalObject");
 
         String attribute = "";
         switch (type) {
@@ -151,46 +125,24 @@ public class DBBroker {
                 break;
         }
 
-        BasicDBObject query;
-
-        switch (wordCount) {
-            case 1:
-                query = new BasicDBObject(attribute, new BasicDBObject("$regex", param.get(0))
-                        .append("$options", "i"));
-                break;
-            case 2:
-                {
-                    query = new BasicDBObject(attribute, new BasicDBObject("$regex", param.get(0))
-                            .append("$regex", param.get(1))
-                            .append("$options", "i"));
-                    break;
-                }
-            default:
-                {
-                    query = new BasicDBObject(attribute, new BasicDBObject("$regex", param.get(0))
-                            .append("$regex", param.get(1))
-                            .append("$regex", param.get(2))
-                            .append("$options", "i"));
-                    break;
-                }
-        }
+        BasicDBObject query = prepareQuery(attribute, param, wordCount);
         return gf.find(query);
     }
     
     public List<GridFSDBFile> findDigitalBooksByYear(Long year){
-        GridFS gf = new GridFS(gfsDb, "objekti");
+        GridFS gf = new GridFS(gfsDb, "digitalObject");
         BasicDBObject query = new BasicDBObject("metadata.date", year);
         return gf.find(query);
     }
 
     public boolean createUser(Document user){
-        MongoCollection<Document> coll = db.getCollection("korisnici");
+        MongoCollection<Document> coll = db.getCollection("user");
         coll.insertOne(user);
         return true;
     }
 
     public ArrayList<Object> findUserByName(ArrayList<String> param, Integer wordCount){
-        MongoCollection<Document> coll = db.getCollection("korisnici");
+        MongoCollection<Document> coll = db.getCollection("user");
         // Based on the number of the words in User's name, different queries are prepared
         // $regex compares Strings
         // $options i neglects the differences between capital and small letteres in Strings
@@ -228,45 +180,45 @@ public class DBBroker {
         else if(type.equals("documentId"))
             attribute = "documentId";
 
-        MongoCollection<Document> coll = db.getCollection("korisnici");
+        MongoCollection<Document> coll = db.getCollection("user");
         BasicDBObject query = new BasicDBObject(attribute, id);
         return coll.find(query).first();
     }
 
     public boolean userBorrowBook(Long userId, Book book, ArrayList<String> dates){
 
-        MongoCollection<Document> coll = db.getCollection("korisnici");
+        MongoCollection<Document> coll = db.getCollection("user");
 
         BasicDBObject push = new BasicDBObject();
         // '$push' command adds an object to an Array
         push.put("$push",
-                new BasicDBObject("zaduzenja",
-                        new BasicDBObject("bookName", book.getGlavniStvarniNaslov()).
-                                append("bookAuthor", book.getPrviPodatakOdg()).
-                                append("invNumber", book.getInvBroj()).
+                new BasicDBObject("borrowedBooks",
+                        new BasicDBObject("bookName", book.getProperTitle()).
+                                append("bookAuthor", book.getFirstStmntResp()).
+                                append("inventoryNum", book.getInventoryNum()).
                                 append("bookTaken", dates.get(0)).
                                 append("bookReturn", dates.get(1))
                 ));
 
         BasicDBObject query = new BasicDBObject();
-        query.put("userID", userId);
+        query.put("userId", userId);
         coll.updateOne(query, push);
         return true;
     }
 
     public boolean updateReturnDate(Long userId, String invNumber, ArrayList<String> dates){
 
-        MongoCollection<Document> coll = db.getCollection("korisnici");
+        MongoCollection<Document> coll = db.getCollection("user");
 
         // Querying the database for book that was borrowed by the specific user
         BasicDBObject query = new BasicDBObject();
-        query.put("userID", userId);
-        query.put("zaduzenja.invNumber", invNumber);
+        query.put("userId", userId);
+        query.put("borrowedBooks.inventoryNum", invNumber);
 
         // Choosing the data to be updated
         BasicDBObject update = new BasicDBObject();
-        update.put("zaduzenja.$.bookTaken", dates.get(0));
-        update.put("zaduzenja.$.bookReturn", dates.get(1));
+        update.put("borrowedBooks.$.bookTaken", dates.get(0));
+        update.put("borrowedBooks.$.bookReturn", dates.get(1));
 
         // '$set' command changes the desired value
         BasicDBObject command = new BasicDBObject();
@@ -277,25 +229,25 @@ public class DBBroker {
     }
 
     public boolean userReturnBook(ArrayList<BasicDBObject> queries){
-        MongoCollection<Document> coll = db.getCollection("korisnici");
+        MongoCollection<Document> coll = db.getCollection("user");
         coll.updateOne(queries.get(0), queries.get(1));
         return true;
     }
 
     public boolean createUserHistory(Long userId){
-        MongoCollection<Document> coll = db.getCollection("istorijaZaduzenja");
-        coll.insertOne(new Document("userID", userId));
+        MongoCollection<Document> coll = db.getCollection("borrowedHistory");
+        coll.insertOne(new Document("userId", userId));
         return true;
     }
 
     public boolean updateUserHistory(ArrayList<BasicDBObject> queries){
-        MongoCollection<Document> coll = db.getCollection("istorijaZaduzenja");
+        MongoCollection<Document> coll = db.getCollection("borrowedHistory");
         coll.updateOne(queries.get(0), queries.get(1));
         return true;
     }
 
     public boolean updateBookData(ArrayList<BasicDBObject> queries){
-        MongoCollection<Document> coll = db.getCollection("knjige");
+        MongoCollection<Document> coll = db.getCollection("book");
         coll.updateOne(queries.get(0), queries.get(1));
         return true;
     }
@@ -307,29 +259,29 @@ public class DBBroker {
     }
 
     public boolean createLibrarian(Document librarian){
-        MongoCollection<Document> coll = db.getCollection("bibliotekar");
+        MongoCollection<Document> coll = db.getCollection("librarian");
         coll.insertOne(librarian);
         return true;
     }
 
     // TODO does it find all librarians or just one?
     public ArrayList<Object> findAllLibrarians(String name){
-        MongoCollection<Document> coll = db.getCollection("bibliotekar");
+        MongoCollection<Document> coll = db.getCollection("librarian");
         ArrayList<Object> librarians = new ArrayList<>();
-        BasicDBObject query = new BasicDBObject("userID", name);
+        BasicDBObject query = new BasicDBObject("userId", name);
         Object obj = coll.find(query).first();
         return librarians;
     }
 
     public Object findLibrarian(String name){
-        MongoCollection<Document> coll = db.getCollection("bibliotekar");
+        MongoCollection<Document> coll = db.getCollection("librarian");
         BasicDBObject query = new BasicDBObject("name", name);
         return coll.find(query).first();
     }
 
     public boolean loginLibrarian(String username, String password){
 
-        MongoCollection<Document> coll = db.getCollection("bibliotekar");
+        MongoCollection<Document> coll = db.getCollection("librarian");
 
         List<BasicDBObject> credentials = new ArrayList<>();
         BasicDBObject query = new BasicDBObject();
@@ -350,5 +302,35 @@ public class DBBroker {
             }
         }
         return booksFound;
+    }
+
+    private BasicDBObject prepareQuery(String attribute, ArrayList<String> param, Integer wordCount){
+
+        // Based on the number of the words in the title, different queries are prepared
+        // $regex compares Strings
+        // $options i neglects the differences between capital and small letteres in Strings
+        BasicDBObject query;
+        switch (wordCount) {
+            case 1:
+                query = new BasicDBObject(attribute, new BasicDBObject("$regex", param.get(0))
+                        .append("$options", "i"));
+                break;
+            case 2:
+            {
+                query = new BasicDBObject(attribute, new BasicDBObject("$regex", param.get(0))
+                        .append("$regex", param.get(1))
+                        .append("$options", "i"));
+                break;
+            }
+            default:
+            {
+                query = new BasicDBObject(attribute, new BasicDBObject("$regex", param.get(0))
+                        .append("$regex", param.get(1))
+                        .append("$regex", param.get(2))
+                        .append("$options", "i"));
+                break;
+            }
+        }
+        return query;
     }
 }

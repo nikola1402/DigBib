@@ -11,7 +11,7 @@ public class DigitalBook {
 
     private DBBroker dbb;
 
-    private String invNumber, title, creator, subject, description,
+    private String inventoryNum, title, creator, subject, description,
             publisher, format, identifier, source, language, collection;
     private Long date;
     private File file;
@@ -19,12 +19,12 @@ public class DigitalBook {
     public DigitalBook() {
     }
 
-    public String getInvNumber() {
-        return invNumber;
+    public String getInventoryNum() {
+        return inventoryNum;
     }
 
-    public void setInvNumber(String invNumber) {
-        this.invNumber = invNumber;
+    public void setInventoryNum(String inventoryNum) {
+        this.inventoryNum = inventoryNum;
     }
 
     public String getTitle() {
@@ -123,11 +123,12 @@ public class DigitalBook {
         this.file = file;
     }
 
-    public boolean createNew(String invNumber, String title, String creator, String subject, String description, String publisher, Long date,
+    // TODO get hashmap as an input parameter?
+    public boolean createNew(String inventoryNum, String title, String creator, String subject, String description, String publisher, Long date,
                              String format, String identifier, String source, String language, String collection, File file) throws IOException {
 
         Map<String, Object> map = new HashMap<>();
-        map.put("inventoryNumber", invNumber);
+        map.put("inventoryNum", inventoryNum);
         map.put("title", title);
         map.put("creator", creator);
         map.put("subject", subject);

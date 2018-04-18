@@ -88,8 +88,8 @@ public class Librarian {
         Gson gson = new Gson();
         JSONParser parser = new JSONParser();
 
-        for(Object o : foundLibrarians){
-            String librarianJsonString = gson.toJson(o);
+        for(Object temp : foundLibrarians){
+            String librarianJsonString = gson.toJson(temp);
             try {
                 JSONObject librarianJsonObject = (JSONObject) parser.parse(librarianJsonString);
                 librarian.setName((String) librarianJsonObject.get("name"));
