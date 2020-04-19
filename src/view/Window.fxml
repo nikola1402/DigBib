@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.Button?>
+<BorderPane fx:controller="view.WindowController" xmlns:fx="http://javafx.com/fxml">
+    <top>
+        <Button text="Circulation"/>
+        <Button text="Processing"/>
+        <Button text="Digital Library"/>
+    </top>
+    <left>
+
+    </left>
+    <center>
+
+    </center>
+    <right>
+
+    </right>
+    <bottom>
+
+    </bottom>
+</BorderPane>

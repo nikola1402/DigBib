@@ -1,20 +1,20 @@
-package controller;
+    package controller;
 
-import com.mongodb.*;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.gridfs.GridFS;
-import com.mongodb.gridfs.GridFSDBFile;
-import com.mongodb.gridfs.GridFSInputFile;
-import com.mongodb.client.MongoCursor;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
+    import com.mongodb.*;
+    import com.mongodb.client.MongoCollection;
+    import com.mongodb.client.MongoDatabase;
+    import com.mongodb.gridfs.GridFS;
+    import com.mongodb.gridfs.GridFSDBFile;
+    import com.mongodb.gridfs.GridFSInputFile;
+    import com.mongodb.client.MongoCursor;
+    import java.io.File;
+    import java.io.IOException;
+    import java.util.*;
 
-import model.Book;
-import org.bson.Document;
+    import model.Book;
+    import org.bson.Document;
 
-public class DBBroker {
+    public class DBBroker {
 
     // Database connection. Needs to be opened only once
     private MongoClient client = new MongoClient();
@@ -80,7 +80,7 @@ public class DBBroker {
         // GridFS works only with DBObjects, it doesn't accept MongoDatabase
         // Connecting to GridFS collection 'objects'
         GridFS objects = new GridFS(gfsDb, "digitalObject");
-        
+
         GridFSInputFile pdf = objects.createFile((File) map.get("file"));
 
         BasicDBObject meta = new BasicDBObject("inventoryNum", map.get("inventoryNum"))
@@ -95,21 +95,21 @@ public class DBBroker {
                 .append("source", map.get("source"))
                 .append("language", map.get("language"))
                 .append("collection", map.get("collection"));
-        
+
         pdf.setMetaData(meta);
         pdf.save();
         return true;
     }
-    
+
     public GridFSDBFile findDigitalBookByInventoryNum(String inventoryNum){
         GridFS gf = new GridFS(gfsDb, "digitalObject");
         BasicDBObject query = new BasicDBObject();
         query.put("metadata.inventoryNum", inventoryNum);
         return gf.findOne(query);
     }
-    
+
     public List<GridFSDBFile> findDigitalBooksByTitleAuthorPublisher(String type, ArrayList<String> param, Integer wordCount){
-        
+
         GridFS gf = new GridFS(gfsDb, "digitalObject");
 
         String attribute = "";
@@ -128,7 +128,7 @@ public class DBBroker {
         BasicDBObject query = prepareQuery(attribute, param, wordCount);
         return gf.find(query);
     }
-    
+
     public List<GridFSDBFile> findDigitalBooksByYear(Long year){
         GridFS gf = new GridFS(gfsDb, "digitalObject");
         BasicDBObject query = new BasicDBObject("metadata.date", year);
@@ -333,4 +333,4 @@ public class DBBroker {
         }
         return query;
     }
-}
+    }
